@@ -1,9 +1,9 @@
 rootProject.name = 'kcd-ad-platform'
 [
         "app:user",
-        "app:user-aid",
         "app:ad",
         "shared:common",
+        "shared:spring-common",
 ].each {
     def projectNameArr = it.split(":")
 

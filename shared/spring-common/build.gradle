@@ -1,0 +1,6 @@
+apply from : "${project.getRootDir()}/gradle/ext/spring.common.gradle"
+
+dependencies {
+
+}
+

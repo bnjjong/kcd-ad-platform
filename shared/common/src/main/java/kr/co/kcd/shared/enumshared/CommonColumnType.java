@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/5/27
+ * Last modified on 2024/5/30
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,12 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.shared.common;
+package kr.co.kcd.shared.enumshared;
 
-public enum Gender {
-  MAN,
-  WOMAN
+public enum CommonColumnType {
+  STRING,
+  INTEGER,
+  LONG,
+
+  ;
 }

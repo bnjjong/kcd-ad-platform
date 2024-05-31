@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/5/29
+ * Last modified on 2024/5/31
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,11 +22,31 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.shared.exception;
+package kr.co.kcd.shared.spring.common.exception;
 
-public class DataNotFoundException extends RuntimeException{
+
+import kr.co.kcd.shared.spring.common.response.code.ErrorResponseCode;
+
+/**
+ *
+ * <p> Use this Exception when logically data that is needed is not exist on your code. </p>
+ *
+ * @author Jongsang Han (Henry)
+ * @version 1.0
+ * @since 1.0
+ * @see BusinessException
+ */
+public class DataNotFoundException extends BusinessException {
+
+  public DataNotFoundException(String message, Throwable cause) {
+    super(message, cause, ErrorResponseCode.DATA_NOT_FOUND);
+  }
 
   public DataNotFoundException(String message) {
-    super(message);
+    super(message, ErrorResponseCode.DATA_NOT_FOUND);
+  }
+
+  public DataNotFoundException(Throwable cause) {
+    super(cause, ErrorResponseCode.DATA_NOT_FOUND);
   }
 }

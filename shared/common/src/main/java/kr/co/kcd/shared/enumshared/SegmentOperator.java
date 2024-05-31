@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/5/27
+ * Last modified on 2024/5/30
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,41 +22,16 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.shared.common;
+package kr.co.kcd.shared.enumshared;
 
-public enum Classification {
-  CAFE("커피숍"),
-  CONVENIENCE_STORE("편의점"),
-  LAUNDRY("세탁소"),
-  FLORIST("꽃집"),
-  BOOKSTORE("서점"),
-  BAKERY("빵집"),
-  FASHION_STORE("패션 의류점"),
-  NAIL_SALON("네일숍"),
-  FITNESS_CENTER("피트니스 센터"),
-  HEALTH_CLINIC("헬스 클리닉"),
-  VETERINARY("수의사"),
-  PHOTO_STUDIO("사진관"),
-  OPTICIAN("안경점"),
-  STATIONERY_STORE("문구점"),
-  ELECTRONICS_REPAIR("전자제품 수리점");
-
-  private final String koreanName;
-
-  Classification(String koreanName) {
-    this.koreanName = koreanName;
-  }
-
-  public String getKoreanName() {
-    return koreanName;
-  }
-
-  public static Classification fromKoreanName(String koreanName) {
-    for (Classification type : Classification.values()) {
-      if (type.getKoreanName().equals(koreanName)) {
-        return type;
-      }
-    }
-    throw new IllegalArgumentException("Invalid Korean name: " + koreanName);
-  }
+public enum SegmentOperator {
+  IN,
+  NOT_IN,
+  GOE,
+  EQ,
+  LOE,
+  TRUE,
+  FALSE,
+  LIKE
 }
+

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/5/28
+ * Last modified on 2024/5/31
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,34 +22,34 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.shared.config;
+package kr.co.kcd.shared.spring.common.exception;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration.AccessLevel;
-import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import kr.co.kcd.shared.spring.common.response.code.ErrorResponseCode;
+import kr.co.kcd.shared.spring.common.response.code.ResponseCode;
 
-@Configuration
-public class CommonConfig {
-  /**
-   * <p>return standard {@code ModelMapper}. </p>
-   * <a href="http://modelmapper.org/user-manual/configuration/#matching-strategies">doc link</a>
-   *
-   * @return standard {@code ModelMapper}
-   */
-  @Bean
-  public ModelMapper standardMapper() {
-    final ModelMapper modelMapper = new ModelMapper();
-    setCommonConfiguration(modelMapper, MatchingStrategies.STANDARD);
-    return modelMapper;
+/**
+ *
+ * <p> 클래스 설명 </p>
+ *
+ * @author JongSang Han (Henry)
+ * @version 1.0
+ * @since 1.0
+ */
+public class UnauthorizedException extends SecurityException {
+  public UnauthorizedException(String message) {
+    super(message, ErrorResponseCode.INVALID_CREDENTIALS);
   }
 
-  private void setCommonConfiguration(ModelMapper modelMapper, MatchingStrategy strict) {
-    modelMapper.getConfiguration()
-        .setMatchingStrategy(strict)
-        .setFieldAccessLevel(AccessLevel.PRIVATE)
-        .setFieldMatchingEnabled(true);
+  public UnauthorizedException(String message, ResponseCode responseCode) {
+    super(message, responseCode);
   }
+
+  public UnauthorizedException(String message, Throwable cause) {
+    super(message, cause, ErrorResponseCode.INVALID_CREDENTIALS);
+  }
+
+  public UnauthorizedException(Throwable cause) {
+    super(cause, ErrorResponseCode.INVALID_CREDENTIALS);
+  }
+
 }
