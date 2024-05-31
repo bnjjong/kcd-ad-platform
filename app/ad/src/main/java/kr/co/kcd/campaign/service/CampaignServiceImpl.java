@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/5/27
+ * Last modified on 2024/6/1
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,15 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.user.service;
+package kr.co.kcd.campaign.service;
 
+import kr.co.kcd.campaign.dto.CampaignDto;
+import kr.co.kcd.campaign.dto.CampaignDto.AppendAdGroup;
+import kr.co.kcd.campaign.model.Campaign;
+import kr.co.kcd.campaign.repository.CampaignRepository;
 import kr.co.kcd.shared.spring.common.exception.DataNotFoundException;
-import kr.co.kcd.user.dto.UserDto;
-import kr.co.kcd.user.model.User;
-import kr.co.kcd.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,21 +38,35 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserServiceImpl implements UserService {
-  private final UserRepository userRepository;
-  private final ModelMapper mapper;
+public class CampaignServiceImpl implements CampaignService {
+  private final CampaignRepository campaignRepository;
 
   @Transactional
   @Override
-  public String create(UserDto.Create user) {
-    User user1 = userRepository.save(mapper.map(user, User.class));
-    return user1.getId();
+  public String create(CampaignDto.Create dto) {
+    Campaign campaign = new Campaign(dto.getProductType(), dto.getPlacement());
+    Campaign savedCampaign = campaignRepository.save(campaign);
+    return savedCampaign.getId();
   }
 
+  @Transactional
   @Override
-  public UserDto.Retrieve retrieveById(String id) {
-    User user = userRepository.findById(id)
-        .orElseThrow(() -> new DataNotFoundException("user is not found by " + id));
-    return mapper.map(user, UserDto.Retrieve.class);
+  public void appendAdGroup(String campaignId, AppendAdGroup dto) {
+    Campaign campaign = retrieveById(campaignId);
+    campaign.appendAdGroup(
+        dto.getPublishYn(),
+        dto.getPriority(),
+        dto.getStartDate(),
+        dto.getEndDate(),
+        dto.getConditions()
+    );
+
+  }
+
+
+  private Campaign retrieveById(String id) {
+    return campaignRepository.findById(id).orElseThrow(
+        () -> new DataNotFoundException("campaign is not found by "+ id)
+    );
   }
 }

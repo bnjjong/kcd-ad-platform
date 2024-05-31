@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/5/27
+ * Last modified on 2024/5/30
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,24 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.user.fixture;
+package kr.co.kcd.user.model;
 
-import kr.co.kcd.shared.enumshared.Classification;
-import kr.co.kcd.shared.enumshared.Gender;
-import kr.co.kcd.shared.enumshared.KoreaRegion;
-import kr.co.kcd.user.model.User;
+import kr.co.kcd.shared.enumshared.CommonColumnType;
+import lombok.Getter;
 
-public interface UserEntityFixture {
-  static User cafe1() {
-    return new User("강백호", 25, Gender.MAN, Classification.CAFE, KoreaRegion.SEOUL, 50000000d);
+@Getter
+public enum UserColumn {
+  AGE(CommonColumnType.INTEGER),
+  GENDER(CommonColumnType.STRING),
+  CLASSIFICATION(CommonColumnType.STRING),
+  KOREA_REGION(CommonColumnType.STRING),
+  MONTHLY_SALES(CommonColumnType.LONG)
+
+  ;
+
+  private final CommonColumnType columnType;
+
+  UserColumn(CommonColumnType columnType) {
+    this.columnType = columnType;
   }
 }

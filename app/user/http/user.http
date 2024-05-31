@@ -1,0 +1,19 @@
+### create
+POST {{host}}:{{port}}/user
+Content-Type: application/json
+
+{
+  "name" : "한종상",
+  "age" :  "39",
+  "gender" : "MAN",
+  "classification" :  "CAFE",
+  "koreaRegion" : "SEOUL",
+  "monthlySales" :  10000000
+}
+> {% //response handler
+  client.global.set("userId", response.body); // (1)
+  client.log("userId : " + client.global.get("userId")); // (2)
+%}
+### Retrieve
+GET {{host}}:{{port}}/user/{{userId}}
+Content-Type: application/json

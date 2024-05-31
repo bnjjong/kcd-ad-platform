@@ -25,9 +25,9 @@
 package kr.co.kcd.user.dto;
 
 
-import kr.co.kcd.shared.common.Classification;
-import kr.co.kcd.shared.common.Gender;
-import kr.co.kcd.shared.common.KoreaRegion;
+import kr.co.kcd.shared.enumshared.Classification;
+import kr.co.kcd.shared.enumshared.Gender;
+import kr.co.kcd.shared.enumshared.KoreaRegion;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

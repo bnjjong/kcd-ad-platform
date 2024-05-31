@@ -31,25 +31,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum YN {
-  Y("Y"),
-  N("N");
+  Y,
+  N,
+  ;
 
-  private final String code;
-
-  /**
-   * <p> Find YN by {@code String} of code. </p>
-   *
-   * @param code {@code String} value of code.
-   * @return return YN {@code Enum} class.
-   * @throws IllegalArgumentException When input code is not valid.
-   */
-  @JsonCreator
-  public static YN fromCode(final String code) {
-    for (YN p : YN.values()) {
-      if (p.code.equals(code)) {
-        return p;
-      }
-    }
-    return null;
-  }
 }

@@ -1,0 +1,39 @@
+### retrieve campaign
+POST {{host}}:{{port}}/campaign/by-user
+Content-Type: application/json
+
+{
+  "id": "",
+  "placement": []
+}
+
+### Create campaign
+POST {{host}}:{{port}}/campaign
+Content-Type: application/json
+
+{
+  "productType": "BANNER",
+  "placement": "banking_top"
+}
+> {% //response handler
+  client.global.set("campaignId", response.body.data); // (1)
+  client.log("campaignId : " + client.global.get("campaignId")); // (2)
+%}
+
+### Create campaign
+POST {{host}}:{{port}}/campaign/{{campaignId}}/ad-group
+Content-Type: application/json
+
+{
+  "publishYn": "Y",
+  "priority": 1.1,
+  "conditions": [
+    {
+      "column": "GENDER",
+      "operator": "EQ",
+      "value": "MAN"
+    }
+  ]
+}
+
+

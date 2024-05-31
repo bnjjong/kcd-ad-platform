@@ -32,13 +32,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import kr.co.kcd.campaign.dto.CampaignDto.AdGroupCondition;
 import kr.co.kcd.shared.enumshared.ProductType;
 import kr.co.kcd.shared.enumshared.YN;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Array;
 import org.hibernate.annotations.UuidGenerator;
 
 @Entity
@@ -59,12 +65,40 @@ public class Campaign {
   @Enumerated(EnumType.STRING)
   private ProductType productType;
 
-
+  /**
+   * 지면 명.
+   */
+  @Column(nullable = false)
+  private String placement;
 
   // ============== child ==============
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "campaign")
   @ToString.Exclude
   private List<AdGroup> adGroupList;
+
   // ============== child ==============
+
+
+  public Campaign(ProductType productType, String placement) {
+    this.productType = productType;
+    this.placement = placement;
+  }
+
+  public void appendAdGroup(
+      YN publishYn,
+      double priority,
+      LocalDate startDate,
+      LocalDate endDate,
+      List<AdGroupCondition> conditions) {
+    AdGroup adGroup = new AdGroup(publishYn, startDate, endDate, BigDecimal.valueOf(priority),
+        this);
+
+    adGroup.addConditions(conditions);
+    if (adGroupList == null) {
+      adGroupList = new ArrayList<>();
+    }
+    adGroupList.add(adGroup);
+  }
+
 
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/5/27
+ * Last modified on 2024/5/31
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,13 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.user.fixture;
+package kr.co.kcd.campaign.service;
 
-import kr.co.kcd.shared.enumshared.Classification;
-import kr.co.kcd.shared.enumshared.Gender;
-import kr.co.kcd.shared.enumshared.KoreaRegion;
-import kr.co.kcd.user.model.User;
+import kr.co.kcd.campaign.dto.CampaignDto;
+import kr.co.kcd.campaign.dto.CampaignDto.AppendAdGroup;
 
-public interface UserEntityFixture {
-  static User cafe1() {
-    return new User("강백호", 25, Gender.MAN, Classification.CAFE, KoreaRegion.SEOUL, 50000000d);
-  }
+public interface CampaignService {
+
+  String create(CampaignDto.Create dto);
+  void appendAdGroup(String campaignId, AppendAdGroup dto);
 }

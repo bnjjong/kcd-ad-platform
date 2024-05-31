@@ -36,8 +36,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Digits;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import kr.co.kcd.campaign.dto.CampaignDto.AdGroupCondition;
 import kr.co.kcd.shared.enumshared.YN;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -62,22 +66,23 @@ public class AdGroup {
    */
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  private YN publishYn;
+  private YN publishYn = YN.Y;
 
   /**
    * 게재 기간 시작일.
    */
-  @Column(nullable = false)
+  @Column
   private LocalDate startDate;
 
   /**
    * 게재 기간 종료일.
    */
-  @Column(nullable = false)
+  @Column
   private LocalDate endDate;
 
   @Column
-  private int priority;
+  @Digits(integer=3, fraction=1) // 정수는 최대 3자리, 소수는 1자리로 제한
+  private BigDecimal priority;
 
   // ============== parent ==============
   /**
@@ -101,5 +106,21 @@ public class AdGroup {
   // ============== child ==============
 
 
+  AdGroup(YN publishYn, LocalDate startDate, LocalDate endDate, BigDecimal priority,
+      Campaign campaign) {
+    this.publishYn = publishYn;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.priority = priority;
+    this.campaign = campaign;
+  }
 
+  void addConditions(List<AdGroupCondition> dtoConditions) {
+    if (conditions == null) {
+      conditions = new ArrayList<>();
+    }
+    for (AdGroupCondition c : dtoConditions) {
+      conditions.add(new AudienceCondition(this, c.getColumn(), c.getOperator(), c.getValue()));
+    }
+  }
 }

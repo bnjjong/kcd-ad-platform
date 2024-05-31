@@ -54,13 +54,17 @@ public class AudienceCondition {
   @Column
   private Long id;
 
+  // ============== parent ==============
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "ad_group_id", nullable = false)
   @ToString.Exclude
   private AdGroup adGroup;
+  // ============== parent ==============
+
   @Column(name = "user_column", nullable = false)
   @Enumerated(EnumType.STRING)
   private UserColumn column;
+
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private SegmentOperator operator;
@@ -68,9 +72,11 @@ public class AudienceCondition {
   @Column(name = "column_value", nullable = false)
   private String value;
 
-
-
-
-
-
+  public AudienceCondition(AdGroup adGroup, UserColumn column, SegmentOperator operator,
+      String value) {
+    this.adGroup = adGroup;
+    this.column = column;
+    this.operator = operator;
+    this.value = value;
+  }
 }

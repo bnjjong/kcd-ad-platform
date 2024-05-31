@@ -1,6 +1,0 @@
-
-
-dependencies {
-    implementation project(":shared:common")
-}
-
