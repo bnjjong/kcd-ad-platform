@@ -1,0 +1,11 @@
+application:
+  id: kcd-ad-platform-ad
+  version: 1.0
+
+spring:
+  application:
+    name: kcd-ad-platform-ad
+  profiles:
+    active: local
+  jpa:
+    open-in-view: false # Open Session in View
