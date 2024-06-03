@@ -74,4 +74,23 @@ public class Creative {
   @Column(name = "landing_url")
   private String url;
 
+  Creative(AdGroup adGroup, String title, String description, String textColor,
+      String backgroundColor, String backgroundImage, String url) {
+    this.adGroup = adGroup;
+    this.title = title;
+    this.description = description;
+    this.textColor = textColor;
+    this.backgroundColor = backgroundColor;
+    this.backgroundImage = backgroundImage;
+    this.url = url;
+  }
+
+  public void update(String title, String description, String textColor, String backgroundColor, String backgroundImage, String url) {
+    this.title = title;
+    this.description = description;
+    this.textColor = textColor;
+    this.backgroundColor = backgroundColor;
+    this.backgroundImage = backgroundImage;
+    this.url = url;
+  }
 }

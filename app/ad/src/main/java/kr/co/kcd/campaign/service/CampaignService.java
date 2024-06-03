@@ -24,11 +24,35 @@
 
 package kr.co.kcd.campaign.service;
 
-import kr.co.kcd.campaign.dto.CampaignDto;
-import kr.co.kcd.campaign.dto.CampaignDto.AppendAdGroup;
+import java.util.List;
+import kr.co.kcd.campaign.dto.CampaignRequestDto;
+import kr.co.kcd.campaign.dto.CampaignRequestDto.AppendCreative;
+import kr.co.kcd.campaign.dto.CampaignRequestDto.Create;
+import kr.co.kcd.campaign.dto.CampaignRequestDto.UpdateAdGroup;
+import kr.co.kcd.campaign.dto.CampaignResponseDto;
 
 public interface CampaignService {
 
-  String create(CampaignDto.Create dto);
-  void appendAdGroup(String campaignId, AppendAdGroup dto);
+  String create(CampaignRequestDto.Create dto);
+  void appendAdGroup(String campaignId, CampaignRequestDto.AppendAdGroup dto);
+
+  void appendCreative(String campaignId, Long adGroupId, CampaignRequestDto.AppendCreative dto);
+
+  CampaignResponseDto.Retrieve retrieveById(String campaignId);
+
+  List<CampaignResponseDto.RetrieveAdGroup> retrieveAdGroups(String campaignId);
+
+  List<CampaignResponseDto.RetrieveCreative> retrieveCreatives(String campaignId, long adGroupId);
+
+  void update(String campaignId, Create dto);
+
+  void updateAdGroup(String campaignId, Long adGroupId, UpdateAdGroup dto);
+
+  void updateCreative(String campaignId, Long adGroupId, Long creativeId, AppendCreative dto);
+
+  void delete(String campaignId);
+
+  void deleteAdGroup(String campaignId, Long adGroupId);
+
+  void deleteCreative(String campaignId, Long adGroupId, Long creativeId);
 }

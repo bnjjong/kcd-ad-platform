@@ -25,7 +25,6 @@
 package kr.co.kcd.campaign.dto;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -43,12 +42,31 @@ import lombok.ToString;
 
 @Getter(AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CampaignDto {
+public class CampaignRequestDto {
+
+
+  // =========================== inner ===========================
+  @NoArgsConstructor(access = AccessLevel.PROTECTED)
+  @ToString
+  @Getter
+  public static class RetrieveAd {
+
+    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+        message = "Invalid UUID format")
+    private String id; // userid
+    @Size(min = 1, max = 1, message = "The number of items must be between 1 and 1")
+    private List<String> placements;
+
+    public RetrieveAd(@NonNull String id, @NonNull List<String> placements) {
+      this.id = id;
+      this.placements = placements;
+    }
+  }
 
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
   @ToString
   @Getter
-  public static class Create extends CampaignDto {
+  public static class Create extends CampaignRequestDto {
     private ProductType productType;
     private String placement;
 
@@ -61,25 +79,21 @@ public class CampaignDto {
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
   @ToString
   @Getter
-  public static class Retrieve extends CampaignDto {
+  public static class Update {
+    private ProductType productType;
+    private String placement;
 
-    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-        message = "Invalid UUID format")
-    private String id; // userid
-    @Size(min = 1, max = 1, message = "The number of items must be between 1 and 1")
-    private List<String> placements;
-
-    public Retrieve(@NonNull String id, @NonNull List<String> placements) {
-      this.id = id;
-      this.placements = placements;
+    public Update(ProductType productType, String placement) {
+      this.productType = productType;
+      this.placement = placement;
     }
   }
 
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
   @ToString
   @Getter
-  public static class AppendAdGroup extends CampaignDto {
-    @NotBlank
+  public static class AppendAdGroup extends CampaignRequestDto {
+    @NotNull(message = "\"publishYn\" is not null.")
     private YN publishYn;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -88,8 +102,18 @@ public class CampaignDto {
     private double priority;
     @Size(min = 1, max = 10, message = "The number of items must be between 1 and 10")
     private List<AdGroupCondition> conditions;
+  }
 
-
+  @NoArgsConstructor(access = AccessLevel.PROTECTED)
+  @ToString
+  @Getter
+  public static class UpdateAdGroup {
+    @NotNull(message = "\"publishYn\" is not null.")
+    private YN publishYn;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    @Min(value = 0, message = "The priority value must be at least 0")
+    private double priority;
   }
 
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -102,6 +126,26 @@ public class CampaignDto {
     private SegmentOperator operator;
     @NotNull(message = "\"value of condition\" is not null.")
     private String value;
+
+    public AdGroupCondition(UserColumn column, SegmentOperator operator, String value) {
+      this.column = column;
+      this.operator = operator;
+      this.value = value;
+    }
+
+  }
+
+
+  @NoArgsConstructor(access = AccessLevel.PROTECTED)
+  @ToString
+  @Getter
+  public static class AppendCreative extends CampaignRequestDto {
+    private String title;
+    private String description;
+    private String textColor;
+    private String backgroundColor;
+    private String backgroundImage;
+    private String url;
   }
 
 }

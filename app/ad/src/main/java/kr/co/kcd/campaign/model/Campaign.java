@@ -32,19 +32,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import kr.co.kcd.campaign.dto.CampaignDto.AdGroupCondition;
+import java.util.Objects;
+import kr.co.kcd.campaign.dto.CampaignRequestDto;
 import kr.co.kcd.shared.enumshared.ProductType;
 import kr.co.kcd.shared.enumshared.YN;
+import kr.co.kcd.shared.spring.common.exception.DataNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.Array;
 import org.hibernate.annotations.UuidGenerator;
 
 @Entity
@@ -72,7 +72,7 @@ public class Campaign {
   private String placement;
 
   // ============== child ==============
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "campaign")
+  @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "campaign")
   @ToString.Exclude
   private List<AdGroup> adGroupList;
 
@@ -89,7 +89,7 @@ public class Campaign {
       double priority,
       LocalDate startDate,
       LocalDate endDate,
-      List<AdGroupCondition> conditions) {
+      List<CampaignRequestDto.AdGroupCondition> conditions) {
     AdGroup adGroup = new AdGroup(publishYn, startDate, endDate, BigDecimal.valueOf(priority),
         this);
 
@@ -100,5 +100,40 @@ public class Campaign {
     adGroupList.add(adGroup);
   }
 
+  public void appendCreative(
+      long adGroupId,
+      String title,
+      String description,
+      String textColor,
+      String backgroundColor,
+      String backgroundImage,
+      String url
+  ) {
+    AdGroup adGroup = findAdGroupById(adGroupId);
 
+    adGroup.addCreative(
+        title, description, textColor, backgroundColor, backgroundImage, url
+    );
+
+
+  }
+
+  public AdGroup findAdGroupById(long adGroupId) {
+    return this.adGroupList.stream()
+        .filter(ag -> ag.getId().equals(adGroupId))
+        .findFirst()
+        .orElseThrow(
+            () -> new DataNotFoundException("ad group is not found by : " + adGroupId)
+        );
+  }
+
+
+  public void update(ProductType productType, String placement) {
+    this.productType = productType;
+    this.placement = placement;
+  }
+
+//  public void deleteAdGroup(Long adGroupId) {
+//    this.adGroupList.removeIf(ag -> Objects.equals(ag.getId(), adGroupId));
+//  }
 }

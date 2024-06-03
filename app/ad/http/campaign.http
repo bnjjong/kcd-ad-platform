@@ -16,24 +16,139 @@ Content-Type: application/json
   "placement": "banking_top"
 }
 > {% //response handler
-  client.global.set("campaignId", response.body.data); // (1)
-  client.log("campaignId : " + client.global.get("campaignId")); // (2)
+  client.global.set("campaignId", response.body.data);
+  client.log("campaignId : " + client.global.get("campaignId"));
 %}
 
-### Create campaign
+### Update campaign
+PUT {{host}}:{{port}}/campaign/{{campaignId}}
+Content-Type: application/json
+
+{
+  "productType": "BANNER",
+  "placement": "banking_top2"
+}
+
+### Delete campaign
+DELETE {{host}}:{{port}}/campaign/{{campaignId}}
+Content-Type: application/json
+
+
+
+
+### Add ad group
 POST {{host}}:{{port}}/campaign/{{campaignId}}/ad-group
 Content-Type: application/json
 
 {
   "publishYn": "Y",
   "priority": 1.1,
+  "startDate": "2024-01-01",
+  "endDate": "2024-12-31",
   "conditions": [
     {
       "column": "GENDER",
       "operator": "EQ",
       "value": "MAN"
+    },
+    {
+      "column": "KOREA_REGION",
+      "operator": "IN",
+      "value": "SEOUL,BUSAN,ULSAN"
     }
   ]
 }
 
+### Update AdGroup
+PUT {{host}}:{{port}}/campaign/{{campaignId}}/1
+Content-Type: application/json
 
+{
+  "publishYn": "Y",
+  "priority": 1.5,
+  "startDate": "2024-01-01",
+  "endDate": "2024-06-30"
+}
+
+### Delete AdGroup
+DELETE {{host}}:{{port}}/campaign/{{campaignId}}/1
+Content-Type: application/json
+
+### Add Creative
+POST {{host}}:{{port}}/campaign/{{campaignId}}/1/creative
+Content-Type: application/json
+
+{
+  "title" :  "k뱅크 특판",
+  "description" : "30대 사장님들을 위한 4%대 금리",
+  "textColor" :  "#292929",
+  "backgroundColor" : "#D9E8FF",
+  "backgroundImage" :  "https://bluebird-asset.cashnote.kr/uploads/image/image/36714/resized_IBKBOX_360x360_20240227.png",
+  "url" : "https://finance-bridge.cashnote.kr/?companyLink=https%3A%2F%2F365.ibkbox.net%3Futm_source%3Dcashnote%26utm_medium%3Daffiliate%26utm_campaign%3DLOAN_2402_MO%26utm_content%3D1&companyName=IBK%EA%B8%B0%EC%97%85%EC%9D%80%ED%96%89"
+}
+
+### Add Creative2
+POST {{host}}:{{port}}/campaign/{{campaignId}}/1/creative
+Content-Type: application/json
+
+{
+  "title": "S뱅크 특판",
+  "description": "청년 창업가를 위한 3.5%대 금리",
+  "textColor": "#FFFFFF",
+  "backgroundColor": "#FFDFD9",
+  "backgroundImage": "https://bluebird-asset.cashnote.kr/uploads/image/image/36715/resized_SBBOX_360x360_20240227.png",
+  "url": "https://finance-bridge.cashnote.kr/?companyLink=https%3A%2F%2F365.sbbank.net%3Futm_source%3Dcashnote%26utm_medium%3Daffiliate%26utm_campaign%3DLOAN_2402_MO%26utm_content%3D1&companyName=SB%EA%B8%B0%EC%97%85%EC%9D%80%ED%96%89"
+}
+
+### Add Creative3
+POST {{host}}:{{port}}/campaign/{{campaignId}}/1/creative
+Content-Type: application/json
+
+{
+  "title": "H은행 대출 이벤트",
+  "description": "중소기업을 위한 5%대 금리",
+  "textColor": "#000000",
+  "backgroundColor": "#E8FFD9",
+  "backgroundImage": "https://bluebird-asset.cashnote.kr/uploads/image/image/36716/resized_HBBBOX_360x360_20240227.png",
+  "url": "https://finance-bridge.cashnote.kr/?companyLink=https%3A%2F%2F365.hbbank.net%3Futm_source%3Dcashnote%26utm_medium%3Daffiliate%26utm_campaign%3DLOAN_2402_MO%26utm_content%3D1&companyName=HB%EA%B8%B0%EC%97%85%EC%9D%80%ED%96%89"
+}
+
+
+
+
+
+
+### retrieve campaign by id
+GET {{host}}:{{port}}/campaign/{{campaignId}}
+Content-Type: application/json
+
+### retrieve adGroups by id
+GET {{host}}:{{port}}/campaign/{{campaignId}}/ad-groups
+Content-Type: application/json
+
+> {%
+  client.global.set("adGroupId", response.body.data[0].id);
+  client.log("adGroupId : " + client.global.get("adGroupId"));
+%}
+
+### retrieve adGroups by id
+GET {{host}}:{{port}}/campaign/{{campaignId}}/{{adGroupId}}/creatives
+Content-Type: application/json
+
+> {%
+  client.global.set("creativeId", response.body.data[0].id);
+  client.log("creativeId : " + client.global.get("creativeId"));
+%}
+
+### update creative
+PUT {{host}}:{{port}}/campaign/{{campaignId}}/1/creative/{{creativeId}}
+Content-Type: application/json
+
+{
+  "title" :  "k2뱅크 특판",
+  "description" : "30-40대 사장님들을 위한 2%대 금리",
+  "textColor" :  "#292929",
+  "backgroundColor" : "#D9E8FF",
+  "backgroundImage" :  "https://bluebird-asset.cashnote.kr/uploads/image/image/36714/resized_IBKBOX_360x360_20240227.png",
+  "url" : "https://finance-bridge.cashnote.kr/?companyLink=https%3A%2F%2F365.ibkbox.net%3Futm_source%3Dcashnote%26utm_medium%3Daffiliate%26utm_campaign%3DLOAN_2402_MO%26utm_content%3D1&companyName=IBK%EA%B8%B0%EC%97%85%EC%9D%80%ED%96%89"
+}
