@@ -64,7 +64,9 @@ public class CampaignRequestDto {
   @ToString
   @Getter
   public static class Update {
+    @NotNull(message = "\"productType\" is not null.")
     private ProductType productType;
+    @NotNull(message = "\"placement\" is not null.")
     private String placement;
 
     public Update(ProductType productType, String placement) {
@@ -107,6 +109,13 @@ public class CampaignRequestDto {
     private LocalDate endDate;
     @Min(value = 0, message = "The priority value must be at least 0")
     private double priority;
+
+    public UpdateAdGroup(YN publishYn, LocalDate startDate, LocalDate endDate, double priority) {
+      this.publishYn = publishYn;
+      this.startDate = startDate;
+      this.endDate = endDate;
+      this.priority = priority;
+    }
   }
 
   @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -25,7 +25,6 @@
 package kr.co.kcd.user.facade;
 
 import kr.co.kcd.user.dto.UserDto;
-import kr.co.kcd.user.dto.UserDto.Retrieve;
 import kr.co.kcd.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -134,7 +134,7 @@ public class Campaign {
         );
   }
 
-  public List<AdGroup> findAdGroupByAudience(UserDto.Retrieve user) {
+  public List<AdGroup> targetAdGroupByAudience(UserDto.Retrieve user) {
 
     return this.getAdGroupList().stream()
         .filter(ag -> ag.getPublishYn() == YN.Y)

@@ -47,7 +47,7 @@ public class AdRequestDto {
     @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
         message = "Invalid UUID format")
     private String id; // userid
-    @Size(min = 1, max = 10, message = "The number of items must be between 1 and 1")
+    @Size(min = 1, max = 10, message = "The placements must be between 1 and 10")
     private List<String> placements;
 
     public RetrieveAd(@NonNull String id, @NonNull List<String> placements) {

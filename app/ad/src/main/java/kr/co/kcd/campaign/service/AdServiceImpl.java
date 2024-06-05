@@ -27,12 +27,10 @@ package kr.co.kcd.campaign.service;
 import java.util.ArrayList;
 import java.util.List;
 import kr.co.kcd.campaign.dto.AdRequestDto;
-import kr.co.kcd.campaign.dto.AdRequestDto.RetrieveAd;
-import kr.co.kcd.campaign.dto.AdResponseDto.SendAd;
+import kr.co.kcd.campaign.dto.AdResponseDto;
 import kr.co.kcd.campaign.dto.AdResponseDto.SendAd.AdInfoDto;
 import kr.co.kcd.campaign.dto.AdResponseDto.SendAd.CreativeDto;
 import kr.co.kcd.campaign.model.AdGroup;
-import kr.co.kcd.campaign.model.AudienceCondition;
 import kr.co.kcd.campaign.model.Campaign;
 import kr.co.kcd.campaign.model.Creative;
 import kr.co.kcd.user.dto.UserDto;
@@ -51,13 +49,13 @@ public class AdServiceImpl implements AdService {
   private final CampaignService campaignService;
 
   @Override
-  public SendAd sendAd(AdRequestDto.RetrieveAd dto) {
+  public AdResponseDto.SendAd sendAd(AdRequestDto.RetrieveAd dto) {
     UserDto.Retrieve user = getAudience(dto.getId());
     List<Campaign> campaigns = campaignService.retrieveEntityByPlacements(dto.getPlacements());
 
     List<AdInfoDto> adInfoDtos = new ArrayList<>();
     for (Campaign c : campaigns) {
-      List<AdGroup> adGroups = c.findAdGroupByAudience(user);
+      List<AdGroup> adGroups = c.targetAdGroupByAudience(user);
       List<CreativeDto> creatives = new ArrayList<>();
       for (AdGroup ag : adGroups) {
         for (Creative ct : ag.getCreatives()) {
@@ -80,7 +78,7 @@ public class AdServiceImpl implements AdService {
       adInfoDtos.add(new AdInfoDto(c.getPlacement(), creatives));
     }
 
-    return new SendAd(adInfoDtos);
+    return new AdResponseDto.SendAd(adInfoDtos);
 
 
     // list to dto

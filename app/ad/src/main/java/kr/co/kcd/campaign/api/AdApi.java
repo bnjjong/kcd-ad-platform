@@ -42,7 +42,7 @@ public class AdApi {
   private final AdService adService;
 
   @PostMapping("/by-audience")
-  public ResponseCommonEntity<AdResponseDto.SendAd> retrieveCampaign(@RequestBody AdRequestDto.RetrieveAd dto) {
+  public ResponseCommonEntity<AdResponseDto.SendAd> sendAd(@RequestBody AdRequestDto.RetrieveAd dto) {
     return new ResponseCommonEntity<>(
         new ResponseOK<>("", adService.sendAd(dto))
     );

@@ -24,6 +24,7 @@
 
 package kr.co.kcd.campaign.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -63,8 +64,10 @@ public class AdResponseDto {
     @ToString
     @Getter
     public static class CreativeDto {
-      private long ad_group_id;
-      private long creative_id;
+      @JsonProperty(value="ad_group_id")
+      private long adGroupId;
+      @JsonProperty(value="creative_id")
+      private long creativeId;
       private String title;
       private String description;
       private String textColor;
@@ -73,11 +76,11 @@ public class AdResponseDto {
       private String url;
       private double priority;
 
-      public CreativeDto(long ad_group_id, long creative_id, String title, String description,
+      public CreativeDto(long adGroupId, long creativeId, String title, String description,
           String textColor, String backgroundColor, String backgroundImage, String url,
           double priority) {
-        this.ad_group_id = ad_group_id;
-        this.creative_id = creative_id;
+        this.adGroupId = adGroupId;
+        this.creativeId = creativeId;
         this.title = title;
         this.description = description;
         this.textColor = textColor;
