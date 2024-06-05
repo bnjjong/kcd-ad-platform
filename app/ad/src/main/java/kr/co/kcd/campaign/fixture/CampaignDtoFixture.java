@@ -55,7 +55,7 @@ public interface CampaignDtoFixture {
         YN.Y,
         LocalDate.of(2024, 1, 1),
         LocalDate.of(2024, 12, 31),
-        1.0d,
+        1.9d,
         List.of(
             new AdGroupCondition(UserColumn.AGE, SegmentOperator.GOE, "30"),
             new AdGroupCondition(UserColumn.AGE, SegmentOperator.LOE, "50")));
@@ -75,7 +75,7 @@ public interface CampaignDtoFixture {
         YN.Y,
         LocalDate.of(2024, 1, 1),
         LocalDate.of(2024, 12, 31),
-        1.2d,
+        1.3d,
         List.of(new AdGroupCondition(UserColumn.KOREA_REGION, SegmentOperator.EQ, "SEOUL")));
   }
 
@@ -84,7 +84,7 @@ public interface CampaignDtoFixture {
         YN.Y,
         LocalDate.of(2024, 1, 1),
         LocalDate.of(2024, 12, 31),
-        1.4d,
+        2.0d,
         List.of(new AdGroupCondition(UserColumn.GENDER, SegmentOperator.EQ, "MAN")));
   }
 
@@ -93,7 +93,7 @@ public interface CampaignDtoFixture {
         YN.Y,
         LocalDate.of(2024, 1, 1),
         LocalDate.of(2024, 12, 31),
-        1.4d,
+        1.5d,
         List.of(new AdGroupCondition(UserColumn.CLASSIFICATION, SegmentOperator.EQ, "CAFE")));
   }
 

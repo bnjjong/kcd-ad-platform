@@ -73,6 +73,9 @@ public class AdGroup {
   /** 게재 기간 종료일. */
   @Column private LocalDate endDate;
 
+  /**
+   * 값이 중복일 경우 케이스도 필요 함.
+   */
   @Column
   @Digits(integer = 3, fraction = 1) // 정수는 최대 3자리, 소수는 1자리로 제한
   private BigDecimal priority;

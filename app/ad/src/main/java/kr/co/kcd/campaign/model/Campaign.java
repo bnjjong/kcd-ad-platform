@@ -36,7 +36,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import kr.co.kcd.campaign.dto.CampaignRequestDto;
 import kr.co.kcd.shared.enumshared.CommonColumnType;
 import kr.co.kcd.shared.enumshared.ProductType;
@@ -148,9 +150,10 @@ public class Campaign {
         .filter(ag -> ag.getConditions()
             .stream()
             .allMatch(c -> mappingCondition(c, user)))
+        .sorted(Comparator.comparing(AdGroup::getPriority))
 //        .peek(ag -> ag.getCreatives()
 //                .forEach(Creative::increaseViewCount))
-        .toList();
+        .collect(Collectors.toList());
   }
 
   private boolean mappingCondition(AudienceCondition c, UserDto.Retrieve user) {
