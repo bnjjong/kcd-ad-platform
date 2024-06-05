@@ -125,9 +125,10 @@ public class AdGroup {
       String textColor,
       String backgroundColor,
       String backgroundImage,
-      String url) {
+      String url,
+      int limitExposure) {
     Creative creative =
-        new Creative(this, title, description, textColor, backgroundColor, backgroundImage, url);
+        new Creative(this, title, description, textColor, backgroundColor, backgroundImage, url, limitExposure);
     if (this.creatives == null) {
       creatives = new ArrayList<>();
     }

@@ -32,14 +32,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Transient;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 public class Creative {
   /**
    * id.
@@ -74,8 +81,19 @@ public class Creative {
   @Column(name = "landing_url")
   private String url;
 
+  /**
+   * 0은 무제한 노출
+   */
+  @Column
+  private int limitExposure;
+  @Column
+  private int viewCount;
+
+  @Transient
+  private AtomicInteger atomicViewCount;
+
   Creative(AdGroup adGroup, String title, String description, String textColor,
-      String backgroundColor, String backgroundImage, String url) {
+      String backgroundColor, String backgroundImage, String url, int limitExposure) {
     this.adGroup = adGroup;
     this.title = title;
     this.description = description;
@@ -83,6 +101,9 @@ public class Creative {
     this.backgroundColor = backgroundColor;
     this.backgroundImage = backgroundImage;
     this.url = url;
+    this.limitExposure = limitExposure;
+    this.atomicViewCount = new AtomicInteger(0);
+    this.viewCount = atomicViewCount.get();
   }
 
   public void update(String title, String description, String textColor, String backgroundColor, String backgroundImage, String url) {
@@ -92,5 +113,20 @@ public class Creative {
     this.backgroundColor = backgroundColor;
     this.backgroundImage = backgroundImage;
     this.url = url;
+  }
+
+  @PostLoad
+  private void postLoad() {
+    this.atomicViewCount = new AtomicInteger(this.viewCount);
+  }
+
+  @PrePersist
+  @PreUpdate
+  private void prePersistOrUpdate() {
+    this.viewCount = this.atomicViewCount.get();
+  }
+
+  public void increaseViewCount() {
+    this.viewCount = atomicViewCount.incrementAndGet();
   }
 }

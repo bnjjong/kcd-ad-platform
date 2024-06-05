@@ -114,12 +114,13 @@ public class Campaign {
       String textColor,
       String backgroundColor,
       String backgroundImage,
-      String url
+      String url,
+      int limitExposure
   ) {
     AdGroup adGroup = findAdGroupById(adGroupId);
 
     adGroup.addCreative(
-        title, description, textColor, backgroundColor, backgroundImage, url
+        title, description, textColor, backgroundColor, backgroundImage, url, limitExposure
     );
 
 
@@ -147,6 +148,8 @@ public class Campaign {
         .filter(ag -> ag.getConditions()
             .stream()
             .allMatch(c -> mappingCondition(c, user)))
+//        .peek(ag -> ag.getCreatives()
+//                .forEach(Creative::increaseViewCount))
         .toList();
   }
 

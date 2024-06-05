@@ -147,16 +147,19 @@ public class CampaignRequestDto {
     private String backgroundColor;
     private String backgroundImage;
     private String url;
+    private int limitExposure;
 
     public AppendCreative(String title, String description, String textColor,
-        String backgroundColor, String backgroundImage, String url) {
+        String backgroundColor, String backgroundImage, String url, int limitExposure) {
       this.title = title;
       this.description = description;
       this.textColor = textColor;
       this.backgroundColor = backgroundColor;
       this.backgroundImage = backgroundImage;
       this.url = url;
+      this.limitExposure = limitExposure;
     }
+
   }
 
 }

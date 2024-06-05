@@ -49,6 +49,7 @@ public class AdServiceImpl implements AdService {
   private final CampaignService campaignService;
 
   @Override
+  @Transactional
   public AdResponseDto.SendAd sendAd(AdRequestDto.RetrieveAd dto) {
     UserDto.Retrieve user = getAudience(dto.getId());
     List<Campaign> campaigns = campaignService.retrieveEntityByPlacements(dto.getPlacements());
@@ -59,20 +60,25 @@ public class AdServiceImpl implements AdService {
       List<CreativeDto> creatives = new ArrayList<>();
       for (AdGroup ag : adGroups) {
         for (Creative ct : ag.getCreatives()) {
-          creatives.add(
-              new CreativeDto(
-                  ag.getId(),
-                  ct.getId(),
-                  ct.getTitle(),
-                  ct.getDescription(),
-                  ct.getTextColor(),
-                  ct.getBackgroundColor(),
-                  ct.getBackgroundImage(),
-                  ct.getUrl(),
-                  ag.getPriority().doubleValue()
-              )
-          );
-
+          // filter view count
+          // todo Campaign 안에서 필터되게 하면 더 좋았을 것 같음.
+          if (ct.getLimitExposure() == 0 || ct.getViewCount() < ct.getLimitExposure()) {
+            // 노출 수 증가.
+            ct.increaseViewCount();
+            creatives.add(
+                new CreativeDto(
+                    ag.getId(),
+                    ct.getId(),
+                    ct.getTitle(),
+                    ct.getDescription(),
+                    ct.getTextColor(),
+                    ct.getBackgroundColor(),
+                    ct.getBackgroundImage(),
+                    ct.getUrl(),
+                    ag.getPriority().doubleValue()
+                )
+            );
+          }
         }
       }
       adInfoDtos.add(new AdInfoDto(c.getPlacement(), creatives));

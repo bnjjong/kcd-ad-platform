@@ -87,7 +87,8 @@ public class CampaignServiceImpl implements CampaignService {
         dto.getTextColor(),
         dto.getBackgroundColor(),
         dto.getBackgroundImage(),
-        dto.getUrl());
+        dto.getUrl(),
+        dto.getLimitExposure());
   }
 
   @Override
