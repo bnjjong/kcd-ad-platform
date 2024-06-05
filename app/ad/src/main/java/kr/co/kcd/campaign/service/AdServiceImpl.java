@@ -47,6 +47,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdServiceImpl implements AdService {
   private final UserFacade userService;
   private final CampaignService campaignService;
+  private static final CreativeDto alternativeCreative;
+  static {
+    // todo 배열로 처리 하거나 따로 디비에 넣어 두는 것도 좋을 듯.
+    alternativeCreative = new CreativeDto(
+        999,
+        999,
+        "대체 광고",
+        "노출할게 없을 경우 노출",
+        "#292929",
+        "#D9E8FF",
+        "https://bluebird-asset.cashnote.kr/uploads/image/image/36714/resized_IBKBOX_360x360_20240227.png",
+        "https://finance-bridge.cashnote.kr/?companyLink=https%3A%2F%2F365.ibkbox.net%3Futm_source%3Dcashnote%26utm_medium%3Daffiliate%26utm_campaign%3DLOAN_2402_MO%26utm_content%3D1&companyName=IBK%EA%B8%B0%EC%97%85%EC%9D%80%ED%96%89",
+        99.9d
+    );
+  }
 
   @Override
   @Transactional
@@ -80,6 +95,10 @@ public class AdServiceImpl implements AdService {
             );
           }
         }
+      }
+      // 대체 이미지
+      if (creatives.isEmpty()) {
+        creatives.add(alternativeCreative);
       }
       adInfoDtos.add(new AdInfoDto(c.getPlacement(), creatives));
     }
