@@ -24,9 +24,19 @@
 
 package kr.co.kcd.user.facade;
 
+import kr.co.kcd.user.dto.UserDto;
+import kr.co.kcd.user.dto.UserDto.Retrieve;
+import kr.co.kcd.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class UserFacade {
+  private final UserService userService;
+
+  public UserDto.Retrieve retrieveById(String userId) {
+    return userService.retrieveById(userId);
+  }
 
 }

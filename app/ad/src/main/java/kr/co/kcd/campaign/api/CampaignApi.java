@@ -50,13 +50,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CampaignApi {
   private final CampaignService campaignService;
 
-  @PostMapping("/by-user")
-  public ResponseCommonEntity<CampaignRequestDto.RetrieveAd> retrieveCampaign(@RequestBody CampaignRequestDto.RetrieveAd dto) {
-    return new ResponseCommonEntity<>(
-        new ResponseOK<>("", null)
-    );
-  }
-
   @PostMapping("")
   public ResponseCommonEntity<String> create(@RequestBody CampaignRequestDto.Create dto) {
     String id = campaignService.create(dto);

@@ -46,27 +46,11 @@ public class CampaignRequestDto {
 
 
   // =========================== inner ===========================
-  @NoArgsConstructor(access = AccessLevel.PROTECTED)
-  @ToString
-  @Getter
-  public static class RetrieveAd {
-
-    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-        message = "Invalid UUID format")
-    private String id; // userid
-    @Size(min = 1, max = 1, message = "The number of items must be between 1 and 1")
-    private List<String> placements;
-
-    public RetrieveAd(@NonNull String id, @NonNull List<String> placements) {
-      this.id = id;
-      this.placements = placements;
-    }
-  }
 
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
   @ToString
   @Getter
-  public static class Create extends CampaignRequestDto {
+  public static class Create  {
     private ProductType productType;
     private String placement;
 
@@ -92,7 +76,7 @@ public class CampaignRequestDto {
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
   @ToString
   @Getter
-  public static class AppendAdGroup extends CampaignRequestDto {
+  public static class AppendAdGroup {
     @NotNull(message = "\"publishYn\" is not null.")
     private YN publishYn;
     private LocalDate startDate;
@@ -102,6 +86,15 @@ public class CampaignRequestDto {
     private double priority;
     @Size(min = 1, max = 10, message = "The number of items must be between 1 and 10")
     private List<AdGroupCondition> conditions;
+
+    public AppendAdGroup(YN publishYn, LocalDate startDate, LocalDate endDate, double priority,
+        List<AdGroupCondition> conditions) {
+      this.publishYn = publishYn;
+      this.startDate = startDate;
+      this.endDate = endDate;
+      this.priority = priority;
+      this.conditions = conditions;
+    }
   }
 
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -132,7 +125,6 @@ public class CampaignRequestDto {
       this.operator = operator;
       this.value = value;
     }
-
   }
 
 
@@ -146,6 +138,16 @@ public class CampaignRequestDto {
     private String backgroundColor;
     private String backgroundImage;
     private String url;
+
+    public AppendCreative(String title, String description, String textColor,
+        String backgroundColor, String backgroundImage, String url) {
+      this.title = title;
+      this.description = description;
+      this.textColor = textColor;
+      this.backgroundColor = backgroundColor;
+      this.backgroundImage = backgroundImage;
+      this.url = url;
+    }
   }
 
 }

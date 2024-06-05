@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/6/1
+ * Last modified on 2024/6/4
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,24 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.campaign.repository;
+package kr.co.kcd.campaign.fixture;
 
-import java.util.List;
-import java.util.Optional;
 import kr.co.kcd.campaign.model.Campaign;
-import org.springframework.data.jpa.repository.JpaRepository;
+import kr.co.kcd.shared.enumshared.ProductType;
 
-public interface CampaignRepository extends JpaRepository<Campaign, String> {
-  Optional<Campaign> findByPlacement(String placement);
-  List<Campaign> findByPlacementIn(List<String> placement);
+public interface CampaignEntityFixture {
+  static Campaign bankingTop() {
+    return new Campaign(ProductType.BANNER, "banking_top");
+  }
 
+  static Campaign bankingBottom() {
+    return new Campaign(ProductType.BANNER, "banking_bottom");
+  }
+
+  static Campaign communityTop() {
+    return new Campaign(ProductType.BANNER, "community_top");
+  }
+  static Campaign communityBottom() {
+    return new Campaign(ProductType.BANNER, "community_bottom");
+  }
 }

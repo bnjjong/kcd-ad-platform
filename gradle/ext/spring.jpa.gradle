@@ -9,7 +9,4 @@ dependencies {
 
     testImplementation 'com.h2database:h2'
 
-    // shared
-//    implementation 'com.mco:spring3-common.jpa:0.0.2.2'
-//    testImplementation 'com.mco:spring3-common.test.jpa:0.0.1'
 }

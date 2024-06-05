@@ -25,12 +25,12 @@
 package kr.co.kcd.campaign.repository;
 
 import java.util.List;
-import java.util.Optional;
-import kr.co.kcd.campaign.model.Campaign;
+import kr.co.kcd.campaign.model.AdGroup;
+import kr.co.kcd.user.dto.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CampaignRepository extends JpaRepository<Campaign, String> {
-  Optional<Campaign> findByPlacement(String placement);
-  List<Campaign> findByPlacementIn(List<String> placement);
+public interface AdGroupCustomRepository {
+
+  List<AdGroup> findAdGroupsByAudience(UserDto.Retrieve dto);
 
 }

@@ -30,6 +30,7 @@ import kr.co.kcd.campaign.dto.CampaignRequestDto.AppendCreative;
 import kr.co.kcd.campaign.dto.CampaignRequestDto.Create;
 import kr.co.kcd.campaign.dto.CampaignRequestDto.UpdateAdGroup;
 import kr.co.kcd.campaign.dto.CampaignResponseDto;
+import kr.co.kcd.campaign.model.Campaign;
 
 public interface CampaignService {
 
@@ -55,4 +56,6 @@ public interface CampaignService {
   void deleteAdGroup(String campaignId, Long adGroupId);
 
   void deleteCreative(String campaignId, Long adGroupId, Long creativeId);
+
+  List<Campaign> retrieveEntityByPlacements(List<String> placement);
 }

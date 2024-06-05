@@ -93,10 +93,10 @@ public class User {
    */
   @Column(nullable = false)
   @Min(value = 0, message = "A \"age\" field is not less than 0")
-  private double monthlySales;
+  private long monthlySales;
 
   public User(String name, Integer age, Gender gender, Classification classification,
-      KoreaRegion koreaRegion, double monthlySales) {
+      KoreaRegion koreaRegion, long monthlySales) {
     this.name = name;
     this.age = age;
     this.gender = gender;

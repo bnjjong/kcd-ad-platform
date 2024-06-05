@@ -1,0 +1,9 @@
+### retrieve ad
+POST {{host}}:{{port}}/ad/by-audience
+Content-Type: application/json
+
+{
+  "id": "4587a6a2-c713-4d78-829d-a38dbe32c622",
+  "placements": ["banking_top","banking_bottom"]
+}
+

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/6/1
+ * Last modified on 2024/6/4
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,11 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.campaign.repository;
+package kr.co.kcd.campaign.service;
 
-import java.util.List;
-import java.util.Optional;
-import kr.co.kcd.campaign.model.Campaign;
-import org.springframework.data.jpa.repository.JpaRepository;
+import kr.co.kcd.campaign.dto.AdRequestDto;
+import kr.co.kcd.campaign.dto.AdResponseDto;
 
-public interface CampaignRepository extends JpaRepository<Campaign, String> {
-  Optional<Campaign> findByPlacement(String placement);
-  List<Campaign> findByPlacementIn(List<String> placement);
-
+public interface AdService {
+  AdResponseDto.SendAd sendAd(AdRequestDto.RetrieveAd dto);
 }

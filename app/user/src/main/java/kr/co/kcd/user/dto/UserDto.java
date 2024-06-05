@@ -44,14 +44,14 @@ public class UserDto {
   private Gender gender;
   private Classification classification;
   private KoreaRegion koreaRegion;
-  private double monthlySales;
+  private long monthlySales;
 
 
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
   @ToString
   public static class Create extends UserDto{
     public Create(String name, int age, Gender gender, Classification classification,
-        KoreaRegion koreaRegion, double monthlySales) {
+        KoreaRegion koreaRegion, long monthlySales) {
       super(null, name, age, gender, classification, koreaRegion, monthlySales);
     }
 
@@ -81,7 +81,7 @@ public class UserDto {
     }
 
     @Override
-    public double getMonthlySales() {
+    public long getMonthlySales() {
       return super.getMonthlySales();
     }
   }
@@ -91,7 +91,7 @@ public class UserDto {
   public static class Retrieve extends UserDto {
 
     public Retrieve(String id, String name, int age, Gender gender, Classification classification,
-        KoreaRegion koreaRegion, double monthlySales) {
+        KoreaRegion koreaRegion, long monthlySales) {
       super(id, name, age, gender, classification, koreaRegion, monthlySales);
     }
 
@@ -126,7 +126,7 @@ public class UserDto {
     }
 
     @Override
-    public double getMonthlySales() {
+    public long getMonthlySales() {
       return super.getMonthlySales();
     }
   }

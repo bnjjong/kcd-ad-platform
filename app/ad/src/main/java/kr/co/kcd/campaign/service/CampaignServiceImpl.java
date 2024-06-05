@@ -196,9 +196,14 @@ public class CampaignServiceImpl implements CampaignService {
     creativeRepository.delete(creative);
   }
 
+  @Override
+  public List<Campaign> retrieveEntityByPlacements(List<String> placements) {
+    return campaignRepository.findByPlacementIn(placements);
+  }
+
   private Campaign retrieveEntityById(String id) {
     return campaignRepository
         .findById(id)
-        .orElseThrow(() -> new DataNotFoundException("campaign is not found by " + id));
+        .orElseThrow(() -> new DataNotFoundException("campaign is not found by id : " + id));
   }
 }

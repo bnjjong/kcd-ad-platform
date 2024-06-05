@@ -25,20 +25,83 @@
 package kr.co.kcd.campaign.init;
 
 import jakarta.annotation.PostConstruct;
+import java.util.List;
+import kr.co.kcd.campaign.dto.CampaignResponseDto.RetrieveAdGroup;
+import kr.co.kcd.campaign.fixture.CampaignDtoFixture;
+import kr.co.kcd.campaign.service.CampaignService;
+import kr.co.kcd.user.fixture.UserEntityFixture;
+import kr.co.kcd.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"local", "alpha"})
+@Profile({"local"})
 @RequiredArgsConstructor
 @Slf4j
 public class InitData {
+  private final UserRepository userRepository;
+  private final CampaignService campaignService;
 
   @PostConstruct
   public void init() {
     try {
+      // user
+      for (int i=0; i<20; i++) {
+        userRepository.save(UserEntityFixture.randomUser());
+      }
+
+      // campaign 1 setting
+      String bankingTopId = campaignService.create(CampaignDtoFixture.bankingTop());
+
+
+      campaignService.appendAdGroup(bankingTopId, CampaignDtoFixture.adGroup1());
+      campaignService.appendAdGroup(bankingTopId, CampaignDtoFixture.adGroup2());
+      campaignService.appendAdGroup(bankingTopId, CampaignDtoFixture.adGroup3());
+
+      // insert creative
+      List<RetrieveAdGroup> retrieveAdGroups = campaignService.retrieveAdGroups(bankingTopId);
+      campaignService.appendCreative(bankingTopId, retrieveAdGroups.get(0).getId(),
+          CampaignDtoFixture.creative1());
+      campaignService.appendCreative(bankingTopId, retrieveAdGroups.get(0).getId(),
+          CampaignDtoFixture.creative2());
+      campaignService.appendCreative(bankingTopId, retrieveAdGroups.get(1).getId(),
+          CampaignDtoFixture.creative3());
+      campaignService.appendCreative(bankingTopId, retrieveAdGroups.get(1).getId(),
+          CampaignDtoFixture.creative4());
+      campaignService.appendCreative(bankingTopId, retrieveAdGroups.get(2).getId(),
+          CampaignDtoFixture.creative1());
+      campaignService.appendCreative(bankingTopId, retrieveAdGroups.get(2).getId(),
+          CampaignDtoFixture.creative2());
+
+
+
+
+      // campaign 2 setting
+      String bankingBottomId = campaignService.create(CampaignDtoFixture.bankingBottom());
+      campaignService.appendAdGroup(bankingBottomId, CampaignDtoFixture.adGroup4());
+      campaignService.appendAdGroup(bankingBottomId, CampaignDtoFixture.adGroup5());
+      campaignService.appendAdGroup(bankingBottomId, CampaignDtoFixture.adGroup6());
+      retrieveAdGroups = campaignService.retrieveAdGroups(bankingBottomId);
+      campaignService.appendCreative(bankingBottomId, retrieveAdGroups.get(0).getId(),
+          CampaignDtoFixture.creative1());
+      campaignService.appendCreative(bankingBottomId, retrieveAdGroups.get(0).getId(),
+          CampaignDtoFixture.creative2());
+      campaignService.appendCreative(bankingBottomId, retrieveAdGroups.get(1).getId(),
+          CampaignDtoFixture.creative3());
+      campaignService.appendCreative(bankingBottomId, retrieveAdGroups.get(1).getId(),
+          CampaignDtoFixture.creative4());
+      campaignService.appendCreative(bankingBottomId, retrieveAdGroups.get(2).getId(),
+          CampaignDtoFixture.creative3());
+      campaignService.appendCreative(bankingBottomId, retrieveAdGroups.get(2).getId(),
+          CampaignDtoFixture.creative4());
+
+
+
+
+      String CommunityTopId = campaignService.create(CampaignDtoFixture.communityTop());
+      String CommunityBottomId = campaignService.create(CampaignDtoFixture.communityBottom());
 
 
     } catch (Exception e) {

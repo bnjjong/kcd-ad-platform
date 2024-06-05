@@ -24,13 +24,34 @@
 
 package kr.co.kcd.campaign.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import jakarta.persistence.EntityManager;
 import java.util.List;
-import java.util.Optional;
-import kr.co.kcd.campaign.model.Campaign;
-import org.springframework.data.jpa.repository.JpaRepository;
+import kr.co.kcd.campaign.model.AdGroup;
+import kr.co.kcd.campaign.model.QAdGroup;
+import kr.co.kcd.user.dto.UserDto;
+import org.springframework.data.jpa.repository.query.JpaQueryMethodFactory;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
-public interface CampaignRepository extends JpaRepository<Campaign, String> {
-  Optional<Campaign> findByPlacement(String placement);
-  List<Campaign> findByPlacementIn(List<String> placement);
+public class AdGroupCustomRepositoryImpl extends QuerydslRepositorySupport implements AdGroupCustomRepository {
 
+  private final EntityManager em;
+  private final JpaQueryMethodFactory queryFactory;
+
+  public AdGroupCustomRepositoryImpl(EntityManager em,
+      JpaQueryMethodFactory queryFactory) {
+    super(AdGroup.class);
+    this.em = em;
+    this.queryFactory = queryFactory;
+  }
+
+  @Override
+  public List<AdGroup> findAdGroupsByAudience(UserDto.Retrieve dto) {
+    QAdGroup adGroup = QAdGroup.adGroup;
+
+//    BooleanBuilder booleanBuilder = new BooleanBuilder()
+//        .and()
+
+    return List.of();
+  }
 }

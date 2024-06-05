@@ -25,7 +25,8 @@
 package kr.co.kcd.campaign.repository;
 
 import kr.co.kcd.campaign.model.AdGroup;
-import kr.co.kcd.campaign.model.Campaign;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AdGroupRepository extends JpaRepository<AdGroup, Long> {}
+public interface AdGroupRepository extends JpaRepository<AdGroup, Long> {
+
+}

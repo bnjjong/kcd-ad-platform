@@ -1,6 +1,7 @@
 apply from : "${project.getRootDir()}/gradle/ext/spring.common.gradle"
 apply from : "${project.getRootDir()}/gradle/ext/spring.jpa.gradle"
-apply from : "${project.getRootDir()}/gradle/ext/spring.doc.gradle"
+apply from : "${project.getRootDir()}/gradle/ext/spring.querydsl.gradle"
+//apply from : "${project.getRootDir()}/gradle/ext/spring.doc.gradle"
 
 dependencies {
     implementation project(":app:user")
@@ -8,3 +9,10 @@ dependencies {
     implementation project(":shared:spring-common")
 }
 
+//querydsl 추가 시작
+def querydslDir = 'src/querydsl/generated'
+
+// querydsl QClass 파일 생성 위치를 지정
+tasks.withType(JavaCompile) {
+    options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
+}

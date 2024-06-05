@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/6/1
+ * Last modified on 2024/5/31
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,37 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.campaign.repository;
+package kr.co.kcd.campaign.dto;
 
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.List;
-import java.util.Optional;
-import kr.co.kcd.campaign.model.Campaign;
-import org.springframework.data.jpa.repository.JpaRepository;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
 
-public interface CampaignRepository extends JpaRepository<Campaign, String> {
-  Optional<Campaign> findByPlacement(String placement);
-  List<Campaign> findByPlacementIn(List<String> placement);
+@Getter(AccessLevel.PACKAGE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class AdRequestDto {
 
+
+  // =========================== inner ===========================
+  @NoArgsConstructor(access = AccessLevel.PROTECTED)
+  @ToString
+  @Getter
+  public static class RetrieveAd {
+
+    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+        message = "Invalid UUID format")
+    private String id; // userid
+    @Size(min = 1, max = 10, message = "The number of items must be between 1 and 1")
+    private List<String> placements;
+
+    public RetrieveAd(@NonNull String id, @NonNull List<String> placements) {
+      this.id = id;
+      this.placements = placements;
+    }
+  }
 }

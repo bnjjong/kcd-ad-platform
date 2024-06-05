@@ -35,21 +35,28 @@ import jakarta.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kr.co.kcd.campaign.dto.CampaignRequestDto;
+import kr.co.kcd.shared.enumshared.CommonColumnType;
 import kr.co.kcd.shared.enumshared.ProductType;
+import kr.co.kcd.shared.enumshared.SegmentOperator;
 import kr.co.kcd.shared.enumshared.YN;
 import kr.co.kcd.shared.spring.common.exception.DataNotFoundException;
+import kr.co.kcd.shared.spring.common.exception.UnexpectedApplicationException;
+import kr.co.kcd.user.dto.UserDto;
+import kr.co.kcd.user.model.UserColumn;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class Campaign {
   /**
    * 아이디.
@@ -127,13 +134,80 @@ public class Campaign {
         );
   }
 
+  public List<AdGroup> findAdGroupByAudience(UserDto.Retrieve user) {
+
+    return this.getAdGroupList().stream()
+        .filter(ag -> ag.getPublishYn() == YN.Y)
+        .filter(ag -> ag.getStartDate() == null
+            || ag.getStartDate().isEqual(LocalDate.now())
+            || !ag.getStartDate().isAfter(LocalDate.now()))
+        .filter(ag -> ag.getEndDate() == null
+            || ag.getEndDate().isEqual(LocalDate.now())
+            || !ag.getEndDate().isBefore(LocalDate.now()))
+        .filter(ag -> ag.getConditions()
+            .stream()
+            .allMatch(c -> mappingCondition(c, user)))
+        .toList();
+  }
+
+  private boolean mappingCondition(AudienceCondition c, UserDto.Retrieve user) {
+    UserColumn column = c.getColumn();
+    SegmentOperator operator = c.getOperator();
+    String value = c.getValue();
+
+    String audienceValue = "";
+    if (column == UserColumn.AGE) {
+      audienceValue = String.valueOf(user.getAge());
+    } else if (column == UserColumn.GENDER) {
+      audienceValue = String.valueOf(user.getGender());
+    } else if (column == UserColumn.CLASSIFICATION) {
+      audienceValue = String.valueOf(user.getClassification());
+    } else if (column == UserColumn.KOREA_REGION) {
+      audienceValue = String.valueOf(user.getKoreaRegion());
+    } else if (column == UserColumn.MONTHLY_SALES) {
+      audienceValue = String.valueOf(user.getMonthlySales());
+    } else {
+      log.error("AudienceCondition : {}, user : {}", c, user);
+      throw new UnexpectedApplicationException("This error should not occur. Please check.");
+
+    }
+    return compareValue(operator, value, audienceValue, column.getColumnType());
+  }
+
+  private boolean compareValue(SegmentOperator operator, String value, String value1, CommonColumnType columnType) {
+    if (operator == SegmentOperator.EQ) {
+      return value.equals(value1);
+    } else if(operator == SegmentOperator.IN){
+      return Arrays.asList(value.split(",")).contains(value1);
+    } else if(operator == SegmentOperator.NOT_IN){
+    return !Arrays.asList(value.split(",")).contains(value1);
+    } else if (operator == SegmentOperator.FALSE || operator == SegmentOperator.TRUE) {
+      return value.equalsIgnoreCase(value1);
+    } else if (operator == SegmentOperator.GOE) {
+      if (columnType == CommonColumnType.INTEGER || columnType == CommonColumnType.LONG) {
+        // value1 이 크거나 같은지.
+        return new BigDecimal(value1).compareTo(new BigDecimal(value)) >= 0;
+      } else {
+        return value1.compareToIgnoreCase(value) >= 0;
+      }
+    } else if (operator == SegmentOperator.LOE) {
+      if (columnType == CommonColumnType.INTEGER || columnType == CommonColumnType.LONG) {
+        // value 이 크거나 같은지.
+        return new BigDecimal(value).compareTo(new BigDecimal(value1)) >= 0;
+      } else {
+        return value.compareToIgnoreCase(value1) >= 0;
+      }
+    } else if (operator == SegmentOperator.LIKE) {
+      return value1.contains(value);
+    } 
+    
+    return false;
+  }
+
 
   public void update(ProductType productType, String placement) {
     this.productType = productType;
     this.placement = placement;
   }
 
-//  public void deleteAdGroup(Long adGroupId) {
-//    this.adGroupList.removeIf(ag -> Objects.equals(ag.getId(), adGroupId));
-//  }
 }

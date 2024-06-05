@@ -24,10 +24,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // ============================== test ==============================
 
-//    // shared
-//    implementation 'com.mco:spring3-common:0.1.1'
-//    testImplementation 'com.mco:spring3-common.test:0.0.1'
-//    testImplementation 'com.mco:spring3-common.test.api:0.0.1'
 }
 
 tasks.named("processResources") { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
