@@ -58,4 +58,6 @@ public interface CampaignService {
   void deleteCreative(String campaignId, Long adGroupId, Long creativeId);
 
   List<Campaign> retrieveEntityByPlacements(List<String> placement);
+
+  void increaseViewCount(Long creativeId);
 }

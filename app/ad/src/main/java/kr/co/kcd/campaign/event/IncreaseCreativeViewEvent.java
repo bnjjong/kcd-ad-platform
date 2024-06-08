@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/5/31
+ * Last modified on 2024/6/8
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,41 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.campaign.api;
+package kr.co.kcd.campaign.event;
 
-import kr.co.kcd.campaign.dto.AdRequestDto;
-import kr.co.kcd.campaign.dto.AdResponseDto;
-import kr.co.kcd.campaign.service.AdService;
-import kr.co.kcd.shared.spring.common.response.ResponseCommonEntity;
-import kr.co.kcd.shared.spring.common.response.success.ResponseOK;
+
+
+import kr.co.kcd.campaign.service.CampaignService;
+import kr.co.kcd.shared.spring.common.event.Event;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.framework.AopContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-@RequestMapping("/ad")
-@RestController
+@Getter
+public class IncreaseCreativeViewEvent extends Event {
+  private final Long creativeId;
+
+  public IncreaseCreativeViewEvent(Long creativeId) {
+    this.creativeId = creativeId;
+  }
+}
+
+@Slf4j
+@Component
 @RequiredArgsConstructor
-public class AdApi {
-  private final AdService adService;
+class IncreaseCreativeViewHandler {
+  private final CampaignService campaignService;
 
-  @PostMapping("/by-audience")
-  public ResponseCommonEntity<AdResponseDto.SendAd> sendAd(@RequestBody AdRequestDto.RetrieveAd dto) {
-    return new ResponseCommonEntity<>(
-        new ResponseOK<>("", adService.sendAd(dto))
-    );
+  @Async
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @EventListener(classes = IncreaseCreativeViewEvent.class)
+  public void handler(IncreaseCreativeViewEvent event) {
+    campaignService.increaseViewCount(event.getCreativeId());
   }
 }

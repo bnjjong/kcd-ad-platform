@@ -33,4 +33,6 @@ public interface CampaignRepository extends JpaRepository<Campaign, String> {
   Optional<Campaign> findByPlacement(String placement);
   List<Campaign> findByPlacementIn(List<String> placement);
 
+
+
 }

@@ -29,4 +29,6 @@ import kr.co.kcd.campaign.dto.AdResponseDto;
 
 public interface AdService {
   AdResponseDto.SendAd sendAd(AdRequestDto.RetrieveAd dto);
+
+
 }

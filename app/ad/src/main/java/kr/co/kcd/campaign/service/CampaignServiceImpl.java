@@ -55,7 +55,6 @@ public class CampaignServiceImpl implements CampaignService {
   private final AdGroupRepository adGroupRepository;
   private final CreativeRepository creativeRepository;
 
-
   @Transactional
   @Override
   public String create(CampaignRequestDto.Create dto) {
@@ -78,7 +77,8 @@ public class CampaignServiceImpl implements CampaignService {
 
   @Transactional
   @Override
-  public void appendCreative(String campaignId, Long adGroupId, CampaignRequestDto.AppendCreative dto) {
+  public void appendCreative(
+      String campaignId, Long adGroupId, CampaignRequestDto.AppendCreative dto) {
     Campaign campaign = retrieveEntityById(campaignId);
     campaign.appendCreative(
         adGroupId,
@@ -100,36 +100,38 @@ public class CampaignServiceImpl implements CampaignService {
   @Override
   public List<RetrieveAdGroup> retrieveAdGroups(String campaignId) {
     Campaign campaign = retrieveEntityById(campaignId);
-    return campaign.getAdGroupList()
-        .stream()
-        .map(ag -> new RetrieveAdGroup(
-            ag.getId(),
-            ag.getPublishYn(),
-            ag.getPriority().doubleValue(),
-            ag.getStartDate(),
-            ag.getEndDate(),
-            ag.getConditions().stream()
-                .map(c -> new AdGroupCondition(
-                    c.getColumn(), c.getOperator(), c.getValue()
-                )).toList()
-        )).toList();
+    return campaign.getAdGroupList().stream()
+        .map(
+            ag ->
+                new RetrieveAdGroup(
+                    ag.getId(),
+                    ag.getPublishYn(),
+                    ag.getPriority().doubleValue(),
+                    ag.getStartDate(),
+                    ag.getEndDate(),
+                    ag.getConditions().stream()
+                        .map(
+                            c -> new AdGroupCondition(c.getColumn(), c.getOperator(), c.getValue()))
+                        .toList()))
+        .toList();
   }
 
   @Override
   public List<RetrieveCreative> retrieveCreatives(String campaignId, long adGroupId) {
     Campaign campaign = retrieveEntityById(campaignId);
     AdGroup adGroup = campaign.findAdGroupById(adGroupId);
-    return adGroup.getCreatives()
-        .stream()
-        .map(c -> new RetrieveCreative(
-            c.getId(),
-            c.getTitle(),
-            c.getDescription(),
-            c.getTextColor(),
-            c.getBackgroundColor(),
-            c.getBackgroundImage(),
-            c.getUrl())
-        ).toList();
+    return adGroup.getCreatives().stream()
+        .map(
+            c ->
+                new RetrieveCreative(
+                    c.getId(),
+                    c.getTitle(),
+                    c.getDescription(),
+                    c.getTextColor(),
+                    c.getBackgroundColor(),
+                    c.getBackgroundImage(),
+                    c.getUrl()))
+        .toList();
   }
 
   @Transactional
@@ -144,19 +146,13 @@ public class CampaignServiceImpl implements CampaignService {
   public void updateAdGroup(String campaignId, Long adGroupId, UpdateAdGroup dto) {
     Campaign campaign = retrieveEntityById(campaignId);
     AdGroup adGroup = campaign.findAdGroupById(adGroupId);
-    adGroup.update(
-        dto.getPublishYn(),
-        dto.getStartDate(),
-        dto.getEndDate(),
-        dto.getPriority()
-    );
-
+    adGroup.update(dto.getPublishYn(), dto.getStartDate(), dto.getEndDate(), dto.getPriority());
   }
 
   @Transactional
   @Override
-  public void updateCreative(String campaignId, Long adGroupId, Long creativeId,
-      AppendCreative dto) {
+  public void updateCreative(
+      String campaignId, Long adGroupId, Long creativeId, AppendCreative dto) {
     Campaign campaign = retrieveEntityById(campaignId);
     AdGroup adGroup = campaign.findAdGroupById(adGroupId);
     Creative creative = adGroup.findCreativeById(creativeId);
@@ -166,9 +162,7 @@ public class CampaignServiceImpl implements CampaignService {
         dto.getTextColor(),
         dto.getBackgroundColor(),
         dto.getBackgroundImage(),
-        dto.getUrl()
-        );
-
+        dto.getUrl());
   }
 
   @Transactional
@@ -176,24 +170,27 @@ public class CampaignServiceImpl implements CampaignService {
   public void delete(String campaignId) {
     Campaign campaign = retrieveEntityById(campaignId);
     campaignRepository.delete(campaign);
-
   }
 
   @Transactional
   @Override
   public void deleteAdGroup(String campaignId, Long adGroupId) {
-    AdGroup adGroup = adGroupRepository.findById(adGroupId)
-        .orElseThrow(() -> new DataNotFoundException("ad group is not found by " + adGroupId));
+    AdGroup adGroup =
+        adGroupRepository
+            .findById(adGroupId)
+            .orElseThrow(() -> new DataNotFoundException("ad group is not found by " + adGroupId));
     adGroupRepository.delete(adGroup);
-//    Campaign campaign = retrieveEntityById(campaignId);
-//    campaign.deleteAdGroup(adGroupId);
-//    campaignRepository.save(campaign);
+    //    Campaign campaign = retrieveEntityById(campaignId);
+    //    campaign.deleteAdGroup(adGroupId);
+    //    campaignRepository.save(campaign);
   }
 
   @Override
   public void deleteCreative(String campaignId, Long adGroupId, Long creativeId) {
-    Creative creative = creativeRepository.findById(creativeId)
-        .orElseThrow(() -> new DataNotFoundException("creative is not found by " + creativeId));
+    Creative creative =
+        creativeRepository
+            .findById(creativeId)
+            .orElseThrow(() -> new DataNotFoundException("creative is not found by " + creativeId));
     creativeRepository.delete(creative);
   }
 
@@ -202,9 +199,17 @@ public class CampaignServiceImpl implements CampaignService {
     return campaignRepository.findByPlacementIn(placements);
   }
 
+  @Transactional
+  @Override
+  public void increaseViewCount(Long creativeId) {
+    creativeRepository.incrementViewCount(creativeId);
+  }
+
   private Campaign retrieveEntityById(String id) {
     return campaignRepository
         .findById(id)
         .orElseThrow(() -> new DataNotFoundException("campaign is not found by id : " + id));
   }
+
+  public void increaseCreativeViewCount(List<Long> ids) {}
 }

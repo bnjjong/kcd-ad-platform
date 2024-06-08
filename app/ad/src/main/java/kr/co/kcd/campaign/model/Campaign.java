@@ -38,12 +38,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import kr.co.kcd.campaign.dto.AdResponseDto.SendAd.CreativeDto;
 import kr.co.kcd.campaign.dto.CampaignRequestDto;
+import kr.co.kcd.campaign.event.IncreaseCreativeViewEvent;
 import kr.co.kcd.shared.enumshared.CommonColumnType;
 import kr.co.kcd.shared.enumshared.ProductType;
 import kr.co.kcd.shared.enumshared.SegmentOperator;
 import kr.co.kcd.shared.enumshared.YN;
+import kr.co.kcd.shared.spring.common.event.Events;
 import kr.co.kcd.shared.spring.common.exception.DataNotFoundException;
 import kr.co.kcd.shared.spring.common.exception.UnexpectedApplicationException;
 import kr.co.kcd.user.dto.UserDto;
@@ -60,33 +62,43 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class Campaign {
-  /**
-   * 아이디.
-   */
-  @Id
-  @UuidGenerator
-  private String id;
+  /** 아이디. */
+  @Id @UuidGenerator private String id;
 
-  /**
-   * 캠페인 상품.
-   */
+  /** 캠페인 상품. */
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private ProductType productType;
 
-  /**
-   * 지면 명.
-   */
+  /** 지면 명. */
   @Column(nullable = false)
   private String placement;
 
   // ============== child ==============
-  @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "campaign")
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "campaign")
   @ToString.Exclude
   private List<AdGroup> adGroupList;
 
   // ============== child ==============
 
+  private static final CreativeDto alternativeCreative;
+
+  public static final int ALTERNATIVE_CREATIVE_ID = 999;
+  public static final int ALTERNATIVE_ADGROUP_ID = 999;
+
+  static {
+    alternativeCreative =
+        new CreativeDto(
+            ALTERNATIVE_ADGROUP_ID,
+            ALTERNATIVE_CREATIVE_ID,
+            "대체 광고",
+            "노출할게 없을 경우 노출",
+            "#292929",
+            "#D9E8FF",
+            "https://bluebird-asset.cashnote.kr/uploads/image/image/36714/resized_IBKBOX_360x360_20240227.png",
+            "https://finance-bridge.cashnote.kr/?companyLink=https%3A%2F%2F365.ibkbox.net%3Futm_source%3Dcashnote%26utm_medium%3Daffiliate%26utm_campaign%3DLOAN_2402_MO%26utm_content%3D1&companyName=IBK%EA%B8%B0%EC%97%85%EC%9D%80%ED%96%89",
+            99.9d);
+  }
 
   public Campaign(ProductType productType, String placement) {
     this.productType = productType;
@@ -99,8 +111,8 @@ public class Campaign {
       LocalDate startDate,
       LocalDate endDate,
       List<CampaignRequestDto.AdGroupCondition> conditions) {
-    AdGroup adGroup = new AdGroup(publishYn, startDate, endDate, BigDecimal.valueOf(priority),
-        this);
+    AdGroup adGroup =
+        new AdGroup(publishYn, startDate, endDate, BigDecimal.valueOf(priority), this);
 
     adGroup.addConditions(conditions);
     if (adGroupList == null) {
@@ -117,43 +129,64 @@ public class Campaign {
       String backgroundColor,
       String backgroundImage,
       String url,
-      int limitExposure
-  ) {
+      int limitExposure) {
     AdGroup adGroup = findAdGroupById(adGroupId);
 
     adGroup.addCreative(
-        title, description, textColor, backgroundColor, backgroundImage, url, limitExposure
-    );
-
-
+        title, description, textColor, backgroundColor, backgroundImage, url, limitExposure);
   }
 
   public AdGroup findAdGroupById(long adGroupId) {
     return this.adGroupList.stream()
         .filter(ag -> ag.getId().equals(adGroupId))
         .findFirst()
-        .orElseThrow(
-            () -> new DataNotFoundException("ad group is not found by : " + adGroupId)
-        );
+        .orElseThrow(() -> new DataNotFoundException("ad group is not found by : " + adGroupId));
   }
 
-  public List<AdGroup> targetAdGroupByAudience(UserDto.Retrieve user) {
+  public List<CreativeDto> retrieveCreatives(UserDto.Retrieve user) {
 
-    return this.getAdGroupList().stream()
-        .filter(ag -> ag.getPublishYn() == YN.Y)
-        .filter(ag -> ag.getStartDate() == null
-            || ag.getStartDate().isEqual(LocalDate.now())
-            || !ag.getStartDate().isAfter(LocalDate.now()))
-        .filter(ag -> ag.getEndDate() == null
-            || ag.getEndDate().isEqual(LocalDate.now())
-            || !ag.getEndDate().isBefore(LocalDate.now()))
-        .filter(ag -> ag.getConditions()
-            .stream()
-            .allMatch(c -> mappingCondition(c, user)))
-        .sorted(Comparator.comparing(AdGroup::getPriority))
-//        .peek(ag -> ag.getCreatives()
-//                .forEach(Creative::increaseViewCount))
-        .collect(Collectors.toList());
+    List<AdGroup> adGroups =
+        this.getAdGroupList().stream()
+            .filter(ag -> ag.getPublishYn() == YN.Y)
+            .filter(
+                ag ->
+                    ag.getStartDate() == null
+                        || ag.getStartDate().isEqual(LocalDate.now())
+                        || !ag.getStartDate().isAfter(LocalDate.now()))
+            .filter(
+                ag ->
+                    ag.getEndDate() == null
+                        || ag.getEndDate().isEqual(LocalDate.now())
+                        || !ag.getEndDate().isBefore(LocalDate.now()))
+            .filter(ag -> ag.getConditions().stream().allMatch(c -> mappingCondition(c, user)))
+            .sorted(Comparator.comparing(AdGroup::getPriority))
+            .toList();
+
+    // dto 변환 작업 및 creative 필터 처리.
+    List<CreativeDto> creatives = new ArrayList<>();
+    for (AdGroup ag : adGroups) {
+      creatives.addAll(ag.getCreatives()
+          .stream()
+          .filter(c -> c.getLimitExposure() == 0 || c.getViewCount() < c.getLimitExposure())
+          .peek(c -> Events.raise(new IncreaseCreativeViewEvent(c.getId()) ))
+          .map(c -> new CreativeDto(
+              ag.getId(),
+              c.getId(),
+              c.getTitle(),
+              c.getDescription(),
+              c.getTextColor(),
+              c.getBackgroundColor(),
+              c.getBackgroundImage(),
+              c.getUrl(),
+              ag.getPriority().doubleValue()
+          ))
+          .toList());
+      }
+
+      if (creatives.isEmpty()) {
+        creatives.add(alternativeCreative);
+      }
+    return creatives;
   }
 
   private boolean mappingCondition(AudienceCondition c, UserDto.Retrieve user) {
@@ -175,18 +208,18 @@ public class Campaign {
     } else {
       log.error("AudienceCondition : {}, user : {}", c, user);
       throw new UnexpectedApplicationException("This error should not occur. Please check.");
-
     }
     return compareValue(operator, value, audienceValue, column.getColumnType());
   }
 
-  private boolean compareValue(SegmentOperator operator, String value, String value1, CommonColumnType columnType) {
+  private boolean compareValue(
+      SegmentOperator operator, String value, String value1, CommonColumnType columnType) {
     if (operator == SegmentOperator.EQ) {
       return value.equals(value1);
-    } else if(operator == SegmentOperator.IN){
+    } else if (operator == SegmentOperator.IN) {
       return Arrays.asList(value.split(",")).contains(value1);
-    } else if(operator == SegmentOperator.NOT_IN){
-    return !Arrays.asList(value.split(",")).contains(value1);
+    } else if (operator == SegmentOperator.NOT_IN) {
+      return !Arrays.asList(value.split(",")).contains(value1);
     } else if (operator == SegmentOperator.FALSE || operator == SegmentOperator.TRUE) {
       return value.equalsIgnoreCase(value1);
     } else if (operator == SegmentOperator.GOE) {
@@ -205,15 +238,13 @@ public class Campaign {
       }
     } else if (operator == SegmentOperator.LIKE) {
       return value1.contains(value);
-    } 
-    
+    }
+
     return false;
   }
-
 
   public void update(ProductType productType, String placement) {
     this.productType = productType;
     this.placement = placement;
   }
-
 }

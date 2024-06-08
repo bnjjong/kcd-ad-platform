@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024
  * Written by JongSang Han<dogfootmaster@gmail.com>
- * Last modified on 2024/5/31
+ * Last modified on 2024/6/6
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,24 @@
  *  SOFTWARE.
  */
 
-package kr.co.kcd.campaign.api;
+package kr.co.kcd.campaign.config;
 
-import kr.co.kcd.campaign.dto.AdRequestDto;
-import kr.co.kcd.campaign.dto.AdResponseDto;
-import kr.co.kcd.campaign.service.AdService;
-import kr.co.kcd.shared.spring.common.response.ResponseCommonEntity;
-import kr.co.kcd.shared.spring.common.response.success.ResponseOK;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@RequestMapping("/ad")
-@RestController
-@RequiredArgsConstructor
-public class AdApi {
-  private final AdService adService;
+@Configuration
+@EnableCaching
+public class CacheConfig {
 
-  @PostMapping("/by-audience")
-  public ResponseCommonEntity<AdResponseDto.SendAd> sendAd(@RequestBody AdRequestDto.RetrieveAd dto) {
-    return new ResponseCommonEntity<>(
-        new ResponseOK<>("", adService.sendAd(dto))
-    );
+  @Bean
+  public CacheManager cacheManager() {
+    ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
+    cacheManager.setAllowNullValues(false);
+    cacheManager.setCacheNames(List.of("ad"));
+    return cacheManager;
   }
 }
