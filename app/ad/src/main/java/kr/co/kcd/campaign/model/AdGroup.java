@@ -76,7 +76,7 @@ public class AdGroup {
   /**
    * 값이 중복일 경우 케이스도 필요 함.
    */
-  @Column
+  @Column(nullable = false)
   @Digits(integer = 3, fraction = 1) // 정수는 최대 3자리, 소수는 1자리로 제한
   private BigDecimal priority;
 
@@ -129,7 +129,7 @@ public class AdGroup {
       String backgroundColor,
       String backgroundImage,
       String url,
-      int limitExposure) {
+      long limitExposure) {
     Creative creative =
         new Creative(this, title, description, textColor, backgroundColor, backgroundImage, url, limitExposure);
     if (this.creatives == null) {

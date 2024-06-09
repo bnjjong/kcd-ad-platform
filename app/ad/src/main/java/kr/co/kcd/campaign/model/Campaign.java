@@ -118,7 +118,7 @@ public class Campaign {
       String backgroundColor,
       String backgroundImage,
       String url,
-      int limitExposure) {
+      long limitExposure) {
     AdGroup adGroup = findAdGroupById(adGroupId);
 
     adGroup.addCreative(
@@ -157,18 +157,21 @@ public class Campaign {
       creatives.addAll(ag.getCreatives()
           .stream()
           .filter(c -> c.getLimitExposure() == 0 || c.getViewCount() < c.getLimitExposure())
-          .peek(c -> Events.raise(new IncreaseCreativeViewEvent(c.getId()) ))
-          .map(c -> new CreativeDto(
-              ag.getId(),
-              c.getId(),
-              c.getTitle(),
-              c.getDescription(),
-              c.getTextColor(),
-              c.getBackgroundColor(),
-              c.getBackgroundImage(),
-              c.getUrl(),
-              ag.getPriority().doubleValue()
-          ))
+          .map(c -> {
+            // 노출수 증가.
+            Events.raise(new IncreaseCreativeViewEvent(c.getId()));
+            return new CreativeDto(
+                ag.getId(),
+                c.getId(),
+                c.getTitle(),
+                c.getDescription(),
+                c.getTextColor(),
+                c.getBackgroundColor(),
+                c.getBackgroundImage(),
+                c.getUrl(),
+                ag.getPriority().doubleValue()
+            );
+          })
           .toList());
       }
 
@@ -199,23 +202,33 @@ public class Campaign {
     String value = c.getValue();
 
     String audienceValue = "";
-    if (column == UserColumn.AGE) {
-      audienceValue = String.valueOf(user.getAge());
-    } else if (column == UserColumn.GENDER) {
-      audienceValue = String.valueOf(user.getGender());
-    } else if (column == UserColumn.CLASSIFICATION) {
-      audienceValue = String.valueOf(user.getClassification());
-    } else if (column == UserColumn.KOREA_REGION) {
-      audienceValue = String.valueOf(user.getKoreaRegion());
-    } else if (column == UserColumn.MONTHLY_SALES) {
-      audienceValue = String.valueOf(user.getMonthlySales());
-    } else {
-      log.error("AudienceCondition : {}, user : {}", c, user);
-      throw new UnexpectedApplicationException("This error should not occur. Please check.");
+    switch (column) {
+      case UserColumn.AGE ->
+        audienceValue = String.valueOf(user.getAge());
+      case UserColumn.GENDER ->
+        audienceValue = String.valueOf(user.getGender());
+      case UserColumn.CLASSIFICATION ->
+        audienceValue = String.valueOf(user.getClassification());
+      case UserColumn.KOREA_REGION ->
+        audienceValue = String.valueOf(user.getKoreaRegion());
+      case UserColumn.MONTHLY_SALES ->
+        audienceValue = String.valueOf(user.getMonthlySales());
+      default -> {
+        log.error("AudienceCondition : {}, user : {}", c, user);
+        throw new UnexpectedApplicationException("This error should not occur. Please check.");
+      }
     }
     return compareValue(operator, value, audienceValue, column.getColumnType());
   }
 
+  /**
+   * 컬럼이 추가 되거나, 연산자가 추가 되거나, 배열 형태의 연산에서 OR 연산자가 필요하면 필히 수정.
+   * @param operator
+   * @param value
+   * @param value1
+   * @param columnType
+   * @return
+   */
   private boolean compareValue(
       SegmentOperator operator, String value, String value1, CommonColumnType columnType) {
     if (operator == SegmentOperator.EQ) {

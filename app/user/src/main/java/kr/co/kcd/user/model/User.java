@@ -30,7 +30,9 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
+import java.math.BigDecimal;
 import kr.co.kcd.shared.enumshared.Classification;
 import kr.co.kcd.shared.enumshared.Gender;
 import kr.co.kcd.shared.enumshared.KoreaRegion;
@@ -92,11 +94,11 @@ public class User {
    * 사업정 월 매출
    */
   @Column(nullable = false)
-  @Min(value = 0, message = "A \"age\" field is not less than 0")
-  private long monthlySales;
+  @Digits(integer = 12, fraction = 2)
+  private BigDecimal monthlySales;
 
   public User(String name, Integer age, Gender gender, Classification classification,
-      KoreaRegion koreaRegion, long monthlySales) {
+      KoreaRegion koreaRegion, BigDecimal monthlySales) {
     this.name = name;
     this.age = age;
     this.gender = gender;

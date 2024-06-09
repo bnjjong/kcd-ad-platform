@@ -24,6 +24,7 @@
 
 package kr.co.kcd.user.fixture;
 
+import java.math.BigDecimal;
 import java.util.Random;
 import kr.co.kcd.shared.enumshared.Classification;
 import kr.co.kcd.shared.enumshared.Gender;
@@ -55,6 +56,6 @@ public interface UserEntityFixture {
         Classification.values()[random.nextInt(Classification.values().length)];
     KoreaRegion region = KoreaRegion.values()[random.nextInt(KoreaRegion.values().length)];
     long income = (long) ((random.nextDouble() + 0.1) * 100000000);
-    return new User(lastName + " " + firstName, age, gender, classification, region, income);
+    return new User(lastName + " " + firstName, age, gender, classification, region, new BigDecimal(income));
   }
 }

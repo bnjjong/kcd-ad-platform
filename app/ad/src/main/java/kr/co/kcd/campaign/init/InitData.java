@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"local"})
+@Profile({"local-dev"})
 @RequiredArgsConstructor
 @Slf4j
 public class InitData {

@@ -66,7 +66,7 @@ public class Creative {
   @Column(nullable = false)
   private String title;
 
-  @Column(nullable = false)
+  @Column
   private String description;
 
   @Column
@@ -75,25 +75,25 @@ public class Creative {
   @Column
   private String backgroundColor;
 
-  @Column
+  @Column(nullable = false)
   private String backgroundImage;
 
-  @Column(name = "landing_url")
+  @Column(name = "landing_url", nullable = false)
   private String url;
 
   /**
    * 0은 무제한 노출
    */
   @Column
-  private int limitExposure;
+  private Long limitExposure;
   @Column
-  private int viewCount;
+  private Long viewCount;
 
-  @Transient
-  private AtomicInteger atomicViewCount;
+//  @Transient
+//  private AtomicInteger atomicViewCount;
 
   Creative(AdGroup adGroup, String title, String description, String textColor,
-      String backgroundColor, String backgroundImage, String url, int limitExposure) {
+      String backgroundColor, String backgroundImage, String url, Long limitExposure) {
     this.adGroup = adGroup;
     this.title = title;
     this.description = description;
@@ -102,8 +102,8 @@ public class Creative {
     this.backgroundImage = backgroundImage;
     this.url = url;
     this.limitExposure = limitExposure;
-    this.atomicViewCount = new AtomicInteger(0);
-    this.viewCount = atomicViewCount.get();
+//    this.atomicViewCount = new AtomicInteger(0);
+    this.viewCount = 0L;
   }
 
   public void update(String title, String description, String textColor, String backgroundColor, String backgroundImage, String url) {
@@ -115,18 +115,18 @@ public class Creative {
     this.url = url;
   }
 
-  @PostLoad
-  private void postLoad() {
-    this.atomicViewCount = new AtomicInteger(this.viewCount);
-  }
-
-  @PrePersist
-  @PreUpdate
-  private void prePersistOrUpdate() {
-    this.viewCount = this.atomicViewCount.get();
-  }
+//  @PostLoad
+//  private void postLoad() {
+//    this.atomicViewCount = new AtomicInteger(this.viewCount);
+//  }
+//
+//  @PrePersist
+//  @PreUpdate
+//  private void prePersistOrUpdate() {
+//    this.viewCount = this.atomicViewCount.get();
+//  }
 
   public void increaseViewCount() {
-    this.viewCount = atomicViewCount.incrementAndGet();
+    this.viewCount += 1;
   }
 }
