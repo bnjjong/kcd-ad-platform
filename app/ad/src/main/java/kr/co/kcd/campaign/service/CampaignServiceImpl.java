@@ -43,6 +43,7 @@ import kr.co.kcd.campaign.repository.CreativeRepository;
 import kr.co.kcd.shared.spring.common.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -194,8 +195,10 @@ public class CampaignServiceImpl implements CampaignService {
     creativeRepository.delete(creative);
   }
 
+  @Cacheable("campaign")
   @Override
   public List<Campaign> retrieveEntityByPlacements(List<String> placements) {
+    log.info("cache not hit!");
     return campaignRepository.findByPlacementIn(placements);
   }
 
@@ -210,6 +213,4 @@ public class CampaignServiceImpl implements CampaignService {
         .findById(id)
         .orElseThrow(() -> new DataNotFoundException("campaign is not found by id : " + id));
   }
-
-  public void increaseCreativeViewCount(List<Long> ids) {}
 }

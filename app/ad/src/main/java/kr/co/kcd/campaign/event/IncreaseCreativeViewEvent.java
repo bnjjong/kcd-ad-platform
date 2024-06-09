@@ -53,8 +53,8 @@ public class IncreaseCreativeViewEvent extends Event {
 class IncreaseCreativeViewHandler {
   private final CampaignService campaignService;
 
-  @Async
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Async // 비동기로 동작
+  @Transactional(propagation = Propagation.REQUIRES_NEW) //새로운 트랙잰션.
   @EventListener(classes = IncreaseCreativeViewEvent.class)
   public void handler(IncreaseCreativeViewEvent event) {
     campaignService.increaseViewCount(event.getCreativeId());

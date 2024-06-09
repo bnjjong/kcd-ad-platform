@@ -36,8 +36,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import kr.co.kcd.campaign.config.EhcacheConfing;
+import kr.co.kcd.campaign.constant.AdConstants;
 import kr.co.kcd.campaign.dto.AdResponseDto.SendAd.CreativeDto;
 import kr.co.kcd.campaign.dto.CampaignRequestDto;
 import kr.co.kcd.campaign.event.IncreaseCreativeViewEvent;
@@ -49,13 +52,16 @@ import kr.co.kcd.shared.spring.common.event.Events;
 import kr.co.kcd.shared.spring.common.exception.DataNotFoundException;
 import kr.co.kcd.shared.spring.common.exception.UnexpectedApplicationException;
 import kr.co.kcd.user.dto.UserDto;
+import kr.co.kcd.user.dto.UserDto.Retrieve;
 import kr.co.kcd.user.model.UserColumn;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.ehcache.Cache;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Getter
@@ -81,24 +87,7 @@ public class Campaign {
 
   // ============== child ==============
 
-  private static final CreativeDto alternativeCreative;
 
-  public static final int ALTERNATIVE_CREATIVE_ID = 999;
-  public static final int ALTERNATIVE_ADGROUP_ID = 999;
-
-  static {
-    alternativeCreative =
-        new CreativeDto(
-            ALTERNATIVE_ADGROUP_ID,
-            ALTERNATIVE_CREATIVE_ID,
-            "대체 광고",
-            "노출할게 없을 경우 노출",
-            "#292929",
-            "#D9E8FF",
-            "https://bluebird-asset.cashnote.kr/uploads/image/image/36714/resized_IBKBOX_360x360_20240227.png",
-            "https://finance-bridge.cashnote.kr/?companyLink=https%3A%2F%2F365.ibkbox.net%3Futm_source%3Dcashnote%26utm_medium%3Daffiliate%26utm_campaign%3DLOAN_2402_MO%26utm_content%3D1&companyName=IBK%EA%B8%B0%EC%97%85%EC%9D%80%ED%96%89",
-            99.9d);
-  }
 
   public Campaign(ProductType productType, String placement) {
     this.productType = productType;
@@ -146,7 +135,7 @@ public class Campaign {
   public List<CreativeDto> retrieveCreatives(UserDto.Retrieve user) {
 
     List<AdGroup> adGroups =
-        this.getAdGroupList().stream()
+        getGroupList(user).stream()
             .filter(ag -> ag.getPublishYn() == YN.Y)
             .filter(
                 ag ->
@@ -184,9 +173,24 @@ public class Campaign {
       }
 
       if (creatives.isEmpty()) {
-        creatives.add(alternativeCreative);
+        creatives.add(AdConstants.alternativeCreative);
       }
     return creatives;
+  }
+
+  private List<AdGroup> getGroupList(Retrieve user) {
+    Cache<String, List<AdGroup>> adGroupsCache = EhcacheConfing.getInstance().getAdGroupsCache();
+    String key = this.getPlacement() + "-" + user.getId();
+    List<AdGroup> adGroups = adGroupsCache.get(key);
+    if (CollectionUtils.isEmpty(adGroups)) {
+      // 불변 리스트로 변환
+      adGroups = Collections.unmodifiableList(this.getAdGroupList());
+      adGroupsCache.put(key, adGroups);
+      log.info("ad groups loaded from db");
+    } else {
+      log.info("ad groups loaded from cache");
+    }
+    return adGroups;
   }
 
   private boolean mappingCondition(AudienceCondition c, UserDto.Retrieve user) {
