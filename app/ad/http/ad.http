@@ -3,7 +3,7 @@ POST {{host}}:{{port}}/ad/by-audience
 Content-Type: application/json
 
 {
-  "id": "1c63ba9f-53ae-40ee-9965-6588b30681fe",
+  "id": "135296da-9850-4b9e-81aa-58162c77eaf4",
   "placements": ["banking_top","banking_bottom"]
 }
 

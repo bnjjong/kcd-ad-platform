@@ -4,8 +4,8 @@ volumes:
   db:
     driver: local
 services:
-  kcd-mysql:
-    container_name: kcd-ad-db
+  kcd-local-mysql:
+    container_name: kcd-local-mysql
     image: mysql:8.3.0
     restart: always
     ports:

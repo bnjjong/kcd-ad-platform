@@ -7,9 +7,10 @@ dependencyManagement {
     }
 }
 
-bootJar {
+jar {
     enabled = false
 }
+
 
 dependencies {
     // spring
