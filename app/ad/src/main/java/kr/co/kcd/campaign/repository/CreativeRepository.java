@@ -28,12 +28,13 @@ import kr.co.kcd.campaign.model.Creative;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface CreativeRepository extends JpaRepository<Creative, Long> {
   @Transactional
   @Modifying
   @Query("UPDATE Creative c SET c.viewCount = c.viewCount + 1 WHERE c.id = :creativeId")
-  int incrementViewCount(Long creativeId);
+  int incrementViewCount(@Param("creativeId") Long creativeId);
 
 }

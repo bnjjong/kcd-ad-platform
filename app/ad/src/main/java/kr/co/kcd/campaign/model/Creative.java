@@ -47,6 +47,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
+@ToString
 public class Creative {
   /**
    * id.

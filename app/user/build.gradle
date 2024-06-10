@@ -10,3 +10,10 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j:8.4.0'
 
 }
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
